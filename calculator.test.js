@@ -66,3 +66,26 @@ test('planner fits all successful plans into the window and never stretches pref
  const p=R.plan({...R.defaults},new Date(start),new Date(start+100*3600000));assert.equal(p.settings.ph,12);assert.equal(p.settings.cold,24);
  assert.ok(R.plan(R.defaults,'','').error);
 });
+
+test('use windows provide stage-specific inspection margins, not one universal hour',()=>{
+ const warm=R.useWindows(calc({}));assert.equal(warm.length,2);
+ assert.deepEqual([warm[0].duration,warm[0].early,warm[0].late],[12,11,13]);
+ const b=R.useWindows(calc(biga))[0];assert.equal(b.kind,'prefer');assert.equal(b.early,14);assert.equal(b.late,18);
+ const hot=R.useWindows(calc({ph:8,preferTemp:28}))[0];assert.ok(hot.earlier<warm[0].earlier);assert.equal(hot.later,0);assert.equal(hot.clippedLate,true);
+});
+test('refrigerated preferment window uses the cold stage; direct dough only has balls',()=>{
+ const cold=R.useWindows(calc(coldPoolish));assert.equal(cold[0].kind,'preferCold');assert.equal(cold[0].duration,24);assert.equal(cold[0].early,22);assert.equal(cold[0].late,24);
+ const direct=R.useWindows(calc({method:'direct'}));assert.equal(direct.length,1);assert.equal(direct[0].kind,'proof');
+ assert.deepEqual(R.useWindows(calc({ph:50})),[]);
+});
+test('windows are bounded by supported durations and total final warm time',()=>{
+ for(const base of [{},{...coldPoolish},{...biga},{method:'direct'}])for(const temp of [16,21,28])for(const proof of [2,4,6]){
+  const r=calc({...base,temp,proof});if(r.errors.length)continue;
+  for(const w of R.useWindows(r)){assert.ok(w.early<=w.duration);assert.ok(w.late>=w.duration);assert.ok(w.early>=0);if(w.kind==='proof')assert.ok(.5+r.v.bulk+w.late<=R.finalMax(temp,r.v.method)+1e-8);}
+ }
+ const edge=R.useWindows(calc({bulk:4,proof:5.5})).find(w=>w.kind==='proof');assert.equal(edge.later,0);
+});
+test('inspection status includes boundaries and treats custom yeast correction as uncertain',()=>{
+ const w=R.useWindows(calc({}))[0];assert.equal(R.useWindowStatus(w,11),'window');assert.equal(R.useWindowStatus(w,13),'window');assert.equal(R.useWindowStatus(w,10.75),'early');assert.equal(R.useWindowStatus(w,13.25),'late');
+ const custom=R.useWindows(calc({adjust:125}))[0];assert.equal(custom.uncertain,true);assert.equal(R.useWindowStatus(custom,12),'uncertain');assert.equal(R.useWindowStatus(null,12),'unknown');
+});

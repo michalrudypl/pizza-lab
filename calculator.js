@@ -125,6 +125,36 @@ const PizzaRules = (() => {
     return {settings:v,result,startsAt,endsAt:end,message:'Plan mieści się w dostępnym czasie. Zapas pozostaje przed rozpoczęciem; dojrzałość sprawdzaj w trakcie.'};
   }
   function timeline(result,bake){let time=new Date(bake).getTime()-result.hours*3600000;if(!Number.isFinite(time))return [];return result.steps.map(s=>{const item={...s,startsAt:time};time+=s.hours*3600000;return item;});}
-  return {defaults,fields,labels,normalize,poolishMax,finalMax,calculate,plan,timeline};
+  // Planning margins for inspection, not experimentally verified maturity
+  // intervals. Green always means "check, then use if ripe", never a guarantee.
+  function useWindows(result){
+    if(!result||result.errors.length)return [];
+    const v=result.v,items=[],quarter=x=>Math.max(.25,Math.floor(x*4+1e-8)/4);
+    const add=(kind,label,duration,min,max,half,temperature,note)=>{
+      const early=Math.max(min,duration-half),late=Math.min(max,duration+half);
+      items.push({kind,label,duration,early,late,temperature,earlier:duration-early,later:late-duration,uncertain:v.adjust!==100,note,clippedEarly:early>duration-half+1e-8,clippedLate:late<duration+half-1e-8});
+    };
+    if(v.method==='poolish'&&v.preferMode==='cold'){
+      add('preferCold','Poolish — koniec etapu w lodówce',v.pcold,12,24,quarter(Math.min(2,v.pcold*.1)/Math.pow(2,(v.fridge-4)/6)),v.fridge,'Okno dotyczy poolishu pozostającego w lodówce. Po wyjęciu do TO ten zapas nie obowiązuje. Sprawdź napowietrzenie i strukturę.');
+    }else if(v.method==='poolish'){
+      add('prefer','Poolish — użycie do ciasta',v.ph,4,poolishMax(v.preferTemp),quarter(Math.min(1.5,v.ph*.1)/Math.pow(2,(v.preferTemp-21)/10)),v.preferTemp,'Użyj, gdy jest mocno napowietrzony, a wierzch zaczyna się spłaszczać lub lekko zapadać. Wyraźne opadnięcie oznacza, że nie warto dalej czekać.');
+    }else if(v.method==='biga'){
+      add('prefer','Biga — użycie do ciasta',v.ph,12,v.preferTemp<=18?20:16,quarter(Math.min(2,v.ph*.125)/Math.pow(2,(v.preferTemp-18)/10)),v.preferTemp,'Rozdziel grudkę: szukaj napowietrzenia i włóknistej struktury. Osłabiona, osiadająca masa wymaga oceny poza harmonogramem.');
+    }
+    const minRoom=v.method==='direct'&&v.cold===0?3:2;
+    const minProof=Math.max(v.cold>0?2:1,minRoom-.5-v.bulk);
+    const maxProof=Math.min(8,finalMax(v.temp,v.method)-.5-v.bulk);
+    const delicate=(v.method!=='direct'&&v.share>40?.8:1)*(v.cold>24?.8:1)*(v.hyd>70?.8:1);
+    const half=quarter(Math.min(1.5,v.proof*.25)*delicate/Math.pow(2,(v.temp-21)/10));
+    add('proof','Kulki — formowanie i pieczenie',v.proof,minProof,maxProof,half,v.temp,'Kulka powinna być napowietrzona i łatwo się rozciągać. Cofanie może oznaczać, że potrzebuje jeszcze czasu lub ogrzania. Przy zmianie temperatury trzeba ocenić ją ponownie.');
+    return items;
+  }
+  function useWindowStatus(window,elapsed){
+    if(!window||!Number.isFinite(elapsed))return 'unknown';
+    if(window.uncertain)return 'uncertain';
+    return elapsed<window.early-1e-8?'early':elapsed>window.late+1e-8?'late':'window';
+  }
+
+  return {defaults,fields,labels,normalize,poolishMax,finalMax,calculate,plan,timeline,useWindows,useWindowStatus};
 })();
 if(typeof module!=='undefined')module.exports=PizzaRules;
