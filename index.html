@@ -1,15 +1,4 @@
-<!doctype html>
-<html lang="pl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#182d27">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Pizza Lab">
-  <link rel="manifest" href="manifest.webmanifest">
-  <title>Pizza Lab — kalkulator poolish</title>
-  <style>
+<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#182d27"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Pizza Lab"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><title>Pizza Lab — poolish, biga i bez zaczynu</title><style>
     :root{
       --bg:#f4f3ed; --card:#fff; --text:#182d27; --muted:#607169; --line:#e7ebe7;
       --accent:#1c6a50; --accent-soft:#dcece2; --warn:#945b0c; --shadow:0 2px 18px rgba(23,43,37,.07);
@@ -68,321 +57,40 @@
       .saved-actions{width:100%}
       .saved-actions button{flex:1 1 0}
     }
-  </style>
-</head>
-<body>
-<main>
-  <div class="tag">PWA · offline</div>
-  <h1>Pizza Lab</h1>
-  <p class="muted">Kalkulator pizzy z poolish: składniki, drożdże, wizualizacja wzrostu i harmonogram.</p>
-
-  <section class="card">
-    <h2>1. Ciasto</h2>
-    <div class="field">
-      <div class="label-row"><label for="balls">Liczba kulek</label><span class="val" id="ballsVal">4</span></div>
-      <input id="balls" type="range" min="1" max="12" step="1" value="4">
-    </div>
-    <div class="grid2">
-      <div class="field">
-        <div class="label-row"><label for="weight">Waga kulki (g)</label></div>
-        <input id="weight" type="number" min="150" max="500" step="5" value="250">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="hyd">Hydratacja</label><span class="val" id="hydVal">65%</span></div>
-        <input id="hyd" type="range" min="55" max="80" step="1" value="65">
-      </div>
-    </div>
-    <div class="field">
-      <div class="label-row"><label for="saltkg">Sól (g / 1 kg gotowego ciasta)</label></div>
-      <input id="saltkg" type="number" step="0.5" min="10" max="24" value="18">
-      <small>18 oznacza 18 g soli na 1000 g ciasta (około 3% mąki przy 65% wody).</small>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>2. Poolish</h2>
-    <div class="grid2">
-      <div class="field">
-        <div class="label-row"><label for="share">Udział mąki w poolish (%)</label></div>
-        <input id="share" type="number" min="10" max="50" step="1" value="30">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="ph">Poolish w TO — czas (h)</label></div>
-        <input id="ph" type="number" min="4" max="16" step="0.5" value="12">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="temp">Temperatura pokojowa TO (°C)</label></div>
-        <input id="temp" type="number" min="16" max="28" step="1" value="21">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="yeast">Rodzaj drożdży</label></div>
-        <select id="yeast"><option value="fresh">Świeże</option><option value="instant">Suszone instant</option></select>
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="adjust">Korekta dawki drożdży (%)</label></div>
-        <input id="adjust" type="number" min="50" max="150" step="5" value="100">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="startcm">Początkowa wysokość w słoiczku (cm)</label></div>
-        <input id="startcm" type="number" min="2" max="10" step="0.5" value="5">
-      </div>
-    </div>
-    <small id="poolishHint"></small>
-    <p class="muted">Poolish ma 100% hydratacji: tyle samo mąki i wody, bez soli. Tutaj cały czas poolish odbywa się w TO. Lodówka w sekcji 3 dotyczy dopiero kulek.</p>
-  </section>
-
-  <section class="card">
-    <h2>3. Fermentacja końcowa</h2>
-    <div class="grid2">
-      <div class="field">
-        <div class="label-row"><label for="bulk">Ciasto przed kulkowaniem — TO (h)</label></div>
-        <input id="bulk" type="number" min="0" max="4" step="0.5" value="1">
-      </div>
-      <div class="field">
-        <div class="label-row"><label for="cold">Kulki w lodówce — TK (h)</label></div>
-        <input id="cold" type="number" min="0" max="48" step="1" value="0">
-      </div>
-    </div>
-    <div class="field">
-      <div class="label-row"><label for="fridge">Temperatura lodówki TK (°C)</label></div>
-      <input id="fridge" type="number" min="3" max="5" step="0.5" value="4">
-      <small>Zmierz termometrem. Model obsługuje TK wyłącznie w 3–5°C.</small>
-    </div>
-    <div class="field">
-      <div class="label-row"><label for="proof">Kulki po TK / w TO (h)</label></div>
-      <input id="proof" type="number" min="1" max="8" step="0.5" value="4">
-    </div>
-    <small id="finalHint"></small>
-    <div class="field">
-      <div class="label-row"><label for="bake">Data i godzina pieczenia</label></div>
-      <input id="bake" type="datetime-local">
-    </div>
-  </section>
-
-  <section class="card" aria-labelledby="validationTitle">
-    <h2 id="validationTitle">Kontrola przepisu</h2>
-    <div id="validation" aria-live="polite" aria-atomic="true"></div>
-    <button id="recommended" class="secondary" type="button">Ustaw zalecany wariant</button>
-    <details>
-      <summary>Zasady i źródła</summary>
-      <p>Limity aplikacji są zachowawczym zakresem dla domowego poolish w TO, a nie uniwersalną granicą fermentacji. Dawka drożdży jest przybliżeniem dla poolish; nie przewiduje dokładnie całego cyklu ciasta ani wpływu mąki.</p>
-      <p>Poolish: maks. 18 h przy 16–20°C, 16 h przy 21–23°C, 12 h przy 24–26°C, 8 h przy 27–28°C. Zwykle warto zacząć od 12–16 h przy 20–22°C i oceniać dojrzałość.</p>
-      <p>Dłuższy wariant poolish z chłodzeniem wymaga innej receptury. 50 h całego procesu może obejmować poolish i późniejszą fermentację gotowego ciasta.</p>
-      <p><a href="https://www.kingarthurbaking.com/pro/reference/preferment" target="_blank" rel="noopener">King Arthur: poolish, temperatura i dojrzałość</a> · <a href="https://www.stadlermade.com/pizza/ingredients/poolish/" target="_blank" rel="noopener">Städler Made: wariant TO i wariant z chłodzeniem</a> · <a href="https://www.pizzanapoletana.org/it/ricetta_pizza_napoletana" target="_blank" rel="noopener">AVPN: proporcje soli w pizzy bezpośredniej</a></p>
-    </details>
-  </section>
-
-  <section class="card" data-result>
-    <h2>Wizualizacja poolish</h2>
-    <div class="visuals">
-      <div class="jar-card">
-        <div class="jar-title">Start · 100%</div>
-        <svg id="jarStart" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg>
-        <div class="jar-note"><span id="startCmOut">5,0</span> cm</div>
-      </div>
-      <div class="jar-card">
-        <div class="jar-title">Około 2× · obserwuj szczyt</div>
-        <svg id="jarTarget" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg>
-        <div class="jar-note"><span id="targetCmOut">10,0</span> cm</div>
-      </div>
-    </div>
-    <small>Przykład wzrostu w pojemniku o pionowych ściankach. Zostaw miejsce na około 3× objętości początkowej. Dojrzały poolish jest mocno napowietrzony; wierzch zaczyna się spłaszczać lub lekko zapadać. Sam poziom 2× nie potwierdza gotowości.</small>
-  </section>
-
-  <section class="card" data-result>
-    <h2>Przepis</h2>
-    <h3>1. Zrób poolish</h3>
-    <div id="poolish"></div>
-    <h3>2. Dodaj do poolish</h3>
-    <div id="final"></div>
-    <h3>Podsumowanie</h3>
-    <div id="summary"></div>
-    <div class="btn-row">
-      <button id="copy" type="button">Kopiuj przepis</button>
-      <button id="save" type="button" class="secondary">Zapisz przepis</button>
-    </div>
-  </section>
-
-  <section class="card" data-result>
-    <h2>Harmonogram</h2>
-    <ol id="timeline"></ol>
-    <small class="warning">Czasy są orientacyjne. Użyj poolish przy szczycie aktywności; wyraźne opadnięcie i rozrzedzenie wskazują na przejrzenie. Kulki powinny być napowietrzone i łatwo się rozciągać.</small>
-  </section>
-
-  <section class="card">
-    <h2>Zapisane przepisy</h2>
-    <div id="saved" class="saved-list"></div>
-    <small>Przepisy są zapisywane lokalnie na tym urządzeniu.</small>
-  </section>
-</main>
-
-<script src="calculator.js"></script>
-<script>
-'use strict';
-const ids=['balls','weight','hyd','saltkg','share','ph','temp','yeast','adjust','startcm','bulk','cold','fridge','proof','bake'];
-const el=id=>document.getElementById(id);
-const fmt=(x,n=1)=>Number(x).toLocaleString('pl-PL',{maximumFractionDigits:n,minimumFractionDigits:n});
-const line=(k,v)=>`<div class="line"><span>${k}</span><b>${v}</b></div>`;
-const fmtDate=d=>d.toLocaleString('pl-PL',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-const read=()=>Object.fromEntries(ids.map(id=>[id,el(id).value]));
-const getSaved=()=>{try{return JSON.parse(localStorage.getItem('pizzaRecipes')||'[]')}catch{return []}};
-const saveJson=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
-let latest='';
-
-function drawJar(svgId, fillFrac){
-  const svg=el(svgId);
-  const maxH=78, bottom=105, left=27, width=86;
-  const frac=Math.max(0,Math.min(1,fillFrac));
-  const liquidH=maxH*frac;
-  const y=bottom-liquidH;
-  const markup=`
-    <rect x="25" y="7" width="90" height="100" rx="8" stroke="#8ea196" fill="none" stroke-width="2"/>
-    <rect x="${left}" y="${y.toFixed(1)}" width="${width}" height="${liquidH.toFixed(1)}" rx="4" fill="#E5BB83" fill-opacity=".95"/>
-    <path d="M${left} ${y.toFixed(1)} Q70 ${(y-4).toFixed(1)} 113 ${y.toFixed(1)}" stroke="#C58D4B" fill="none" stroke-width="2"/>
-    <path d="M17 ${y.toFixed(1)}H123" stroke="#607169" stroke-dasharray="3 4" stroke-opacity=".5"/>
-    <g fill="#F8EFD9">
-      <circle cx="45" cy="${Math.min(bottom-8,y+12).toFixed(1)}" r="4"/>
-      <circle cx="79" cy="${Math.min(bottom-12,y+19).toFixed(1)}" r="5"/>
-      <circle cx="99" cy="${Math.min(bottom-18,y+35).toFixed(1)}" r="3"/>
-      <circle cx="54" cy="${Math.min(bottom-10,y+46).toFixed(1)}" r="5"/>
-      <circle cx="83" cy="${Math.min(bottom-8,y+50).toFixed(1)}" r="3"/>
-    </g>`;
-  svg.innerHTML=markup;
-}
-
-function render(){
-  const v=read();
-  const n=k=>Number(v[k]);
-  el('ballsVal').textContent=v.balls;
-  el('hydVal').textContent=v.hyd+'%';
-
-  const maxPoolish=PizzaRules.poolishMax(n('temp'));
-  el('ph').max=maxPoolish;
-  el('poolishHint').textContent=`Przy ${v.temp || '—'}°C: 4–${maxPoolish} h w zakresie aplikacji. Drożdże są szacunkiem; obserwuj szczyt aktywności.`;
-  el('finalHint').textContent=`Po poolish: łącznie 2–${PizzaRules.finalMax(n('temp'))} h w TO, wliczając 30 min wyrabiania. TK: 0–48 h; po TK co najmniej 2 h w TO.`;
-  const result=PizzaRules.calculate(v);
-  ids.forEach(id=>el(id).removeAttribute('aria-invalid'));
-  result.errors.forEach(e=>el(e.field).setAttribute('aria-invalid','true'));
-  const box=el('validation');
-  box.replaceChildren();
-  if(result.errors.length || result.warnings.length){
-    const notice=document.createElement('div');
-    notice.className='notice'+(result.errors.length?' error':'');
-    const heading=document.createElement('b');
-    heading.textContent=result.errors.length?'Popraw ustawienia — przepis jest zablokowany.':'Sprawdź przed przygotowaniem';
-    const list=document.createElement('ul');
-    [...result.errors.map(e=>e.text),...result.warnings].forEach(text=>{
-      const li=document.createElement('li'); li.textContent=text; list.append(li);
-    });
-    notice.append(heading,list); box.append(notice);
-  }else box.textContent='Ustawienia mieszczą się w zakresie aplikacji. Dojrzałość potwierdź wyglądem poolish i ciasta.';
-  const blocked=result.errors.length>0;
-  document.querySelectorAll('[data-result]').forEach(section=>section.hidden=blocked);
-  el('copy').disabled=el('save').disabled=blocked;
-  latest='';
-  if(blocked) return;
-  const {total,hyd,salt,share,yPct,flour,water,pf,pw,yeast,ff,fw,saltPct}=result;
-
-  el('poolish').innerHTML=
-    line('Mąka',fmt(pf)+' g')+
-    line('Woda',fmt(pw)+' g')+
-    line('Drożdże '+(v.yeast==='fresh'?'świeże':'instant'),fmt(yeast,3)+' g')+
-    line('Masa poolish',fmt(pf+pw+yeast)+' g');
-
-  el('final').innerHTML=
-    line('Cały poolish',fmt(pf+pw+yeast)+' g')+
-    line('Mąka',fmt(ff)+' g')+
-    line('Woda',fmt(fw)+' g')+
-    line('Sól',fmt(salt)+' g');
-
-  el('summary').innerHTML=
-    line('Kulki',`${v.balls} × ${v.weight} g`) +
-    line('Masa ciasta',fmt(total)+' g') +
-    line('Mąka łącznie',fmt(flour)+' g') +
-    line('Woda łącznie',fmt(water)+' g') +
-    line('Hydratacja',v.hyd+'%') +
-    line('Sól',`${fmt(salt)} g (${fmt(saltPct,2)}% mąki)`) +
-    line('Drożdże w poolish',fmt(yPct,3)+'% mąki w poolish');
-
-  const startCm=n('startcm');
-  const targetCm=startCm*2;
-  const scaleCm=Math.max(12,targetCm*1.2);
-  el('startCmOut').textContent=fmt(startCm,1);
-  el('targetCmOut').textContent=fmt(targetCm,1);
-  drawJar('jarStart', startCm/scaleCm);
-  drawJar('jarTarget', targetCm/scaleCm);
-
-  const bake=new Date(v.bake), valid=Number.isFinite(bake.getTime());
-  const steps=[
-    [`Przygotuj poolish — TO ${v.temp}°C`, n('ph')],
-    ['Wyrób ciasto (ok. 30 min)', 0.5],
-    ...(n('bulk') ? [[`Fermentacja ciasta w TO ${v.temp}°C`, n('bulk')]] : []),
-    ['Podziel i uformuj kulki', 0],
-    ...(n('cold') ? [[`Kulki w lodówce — TK ${v.fridge}°C`, n('cold')]] : []),
-    [`Wyrastanie kulek w TO ${v.temp}°C`, n('proof')]
-  ];
-
-  if(valid){
-    let t=new Date(bake.getTime()-steps.reduce((a,s)=>a+s[1],0)*3600000);
-    el('timeline').innerHTML=steps.map(([name,h])=>{
-      const start=fmtDate(t);
-      t=new Date(t.getTime()+h*3600000);
-      return `<li><b>${start}</b> — ${name}${h?` (${fmt(h,1)} h)`:''}</li>`;
-    }).join('')+`<li><b>${fmtDate(bake)}</b> — Pieczenie</li>`;
-  } else {
-    el('timeline').innerHTML='<li>Ustaw datę pieczenia.</li>';
-  }
-
-  latest=
-`PIZZA LAB\n${v.balls} kulek po ${v.weight} g\nMasa ciasta: ${fmt(total)} g\n\nPOOLISH:\n- mąka ${fmt(pf)} g\n- woda ${fmt(pw)} g\n- drożdże ${fmt(yeast,3)} g (${v.yeast})\n- fermentacja ${v.ph} h w ${v.temp}°C\n\nDODAJ DO POOLISH:\n- mąka ${fmt(ff)} g\n- woda ${fmt(fw)} g\n- sól ${fmt(salt)} g\n\nFERMENTACJA KOŃCOWA:\n- ciasto w TO ${v.bulk} h\n- kulki w TK ${v.cold} h (${v.fridge}°C)\n- kulki w TO ${v.proof} h\n\nPOOLISH W SŁOIKU:\n- start ${fmt(startCm,1)} cm\n- poglądowe 2× = ${fmt(targetCm,1)} cm; obserwuj bąbelki i szczyt aktywności\n\nPIECZENIE: ${valid?fmtDate(bake):'nie ustawiono'}\n\nUWAGI: Dawka drożdży to szacunek dla poolish, a harmonogram wymaga obserwacji.\n${result.warnings.join('\n')}`;
-
-  saveJson('pizzaSettings', v);
-}
-
-function renderSaved(){
-  const target=el('saved');
-  const arr=getSaved();
-  target.innerHTML='';
-  if(!arr.length){ target.textContent='Brak zapisanych przepisów.'; return; }
-  arr.forEach((item,idx)=>{
-    const wrap=document.createElement('div');
-    wrap.className='saved-item';
-    const name=document.createElement('div');
-    name.className='saved-name';
-    name.textContent=item.name;
-    const actions=document.createElement('div');
-    actions.className='saved-actions';
-    const load=document.createElement('button'); load.type='button'; load.className='secondary'; load.textContent='Wczytaj';
-    const del=document.createElement('button'); del.type='button'; del.className='delete'; del.textContent='Usuń';
-    load.onclick=()=>{ ids.forEach(id=>{ if(item.settings[id]!==undefined) el(id).value=item.settings[id]; }); render(); };
-    del.onclick=()=>{ const newer=getSaved(); newer.splice(idx,1); saveJson('pizzaRecipes', newer); renderSaved(); };
-    actions.append(load,del); wrap.append(name,actions); target.append(wrap);
-  });
-}
-
-let previous=null;
-try{ previous=JSON.parse(localStorage.getItem('pizzaSettings')||'null'); }catch{}
-if(previous){ ids.forEach(id=>{ if(previous[id]!==undefined) el(id).value=previous[id]; }); }
-else {
-  const d=new Date(Date.now()+2*86400000); d.setHours(15,0,0,0);
-  const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
-  el('bake').value=local.toISOString().slice(0,16);
-}
-ids.forEach(id=>el(id).addEventListener('input', render));
-el('copy').onclick=async()=>{ if(!latest) return; try{ await navigator.clipboard.writeText(latest); alert('Skopiowano przepis'); }catch{ alert('Kopiowanie jest niedostępne w tej przeglądarce.'); } };
-el('save').onclick=()=>{
-  if(!latest) return;
-  const name=prompt('Nazwa przepisu',`Pizza ${el('balls').value} × ${el('weight').value} g`);
-  if(!name) return;
-  const arr=getSaved(); arr.push({name,settings:read()}); saveJson('pizzaRecipes', arr); renderSaved();
-};
-el('recommended').onclick=()=>{
-  Object.entries(PizzaRules.defaults).forEach(([id,value])=>{el(id).value=value;});
-  render();
-};
-render();
-renderSaved();
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-</script>
-</body>
-</html>
+  
+    textarea{font:inherit;width:100%;min-height:100px;resize:vertical;padding:12px;border:1px solid #cbd5cd;border-radius:12px;color:var(--text)}
+    .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    nav{display:flex;gap:6px;position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0}
+    nav button{flex:1;padding:11px 6px;font-size:14px;background:#e5ebe6;color:var(--text)}
+    nav button[aria-pressed=true]{background:var(--accent);color:white}
+    .readiness{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+    .readiness button{display:block;padding:10px 6px;font-size:13px;color:var(--text);background:#f5f5f0;border:2px solid transparent}
+    .readiness button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+    .readiness svg{display:block;width:100%;height:80px;margin-bottom:8px}
+    .timer{font-size:34px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-weight:700;margin:12px 0}
+    .photo{display:block;max-width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:12px}
+    .entry{padding:16px 0;border-bottom:1px solid var(--line)}
+    .entry p{white-space:pre-wrap;overflow-wrap:anywhere}
+    .progress{height:6px;background:#e5ebe6;border-radius:9px;overflow:hidden;margin:12px 0}
+    .progress>div{height:100%;background:var(--accent)}
+    .field small{display:block;margin-top:6px}
+    @media(max-width:560px){.grid2{grid-template-columns:1fr}.line{font-size:14px}.line b{white-space:normal}.readiness{gap:5px}}
+</style></head><body><main>
+<div class="tag">PWA · offline</div><h1>Pizza Lab</h1><p class="muted">Zaplanuj, przygotuj i zapisz swój kolejny wypiek.</p>
+<nav aria-label="Widoki aplikacji"><button data-view="calculator" aria-pressed="true">Kalkulator</button><button data-view="guide" aria-pressed="false">Robię teraz</button><button data-view="journal" aria-pressed="false">Moje wypieki</button></nav>
+<div id="appMessage" role="status" aria-live="polite"></div>
+<div id="view-calculator">
+<section class="card"><h2>1. Wybierz metodę</h2><div class="field"><label for="method">Metoda przygotowania</label><select id="method"><option value="poolish">Poolish — płynny zaczyn</option><option value="biga">Biga — sztywny zaczyn</option><option value="direct">Bez zaczynu — metoda bezpośrednia</option></select></div><p id="methodNote" class="muted"></p></section>
+<section class="card"><h2>2. Kiedy chcesz jeść pizzę?</h2><div class="grid2"><div class="field"><label for="earliest">Mogę zacząć najwcześniej</label><input id="earliest" type="datetime-local" value="" ></div><div class="field"><label for="bake">Data i godzina pieczenia</label><input id="bake" type="datetime-local" value="" ></div></div><button id="plan" type="button">Zaplanuj za mnie</button><p id="planMessage" aria-live="polite" class="muted">Wybierz metodę i termin. Proponowany plan możesz później zmienić ręcznie.</p></section>
+<section class="card"><h2>3. Ciasto</h2><div class="field"><div class="label-row"><label for="balls">Liczba kulek</label><span id="ballsVal" class="val">4</span></div><input id="balls" type="range" min="1" max="12" step="1" value="4"></div><div class="grid2"><div class="field"><label for="weight">Waga kulki (g)</label><input id="weight" type="number" value="250" min="150" max="500" step="5"></div><div class="field"><div class="label-row"><label for="hyd">Hydratacja</label><span id="hydVal" class="val">65%</span></div><input id="hyd" type="range" min="55" max="80" step="1" value="65"></div></div><div class="field"><label for="saltkg">Sól (g / 1 kg gotowego ciasta)</label><input id="saltkg" type="number" value="18" min="10" max="24" step="0.5"><small>18 g/kg ciasta daje około 3% soli względem mąki przy 65% wody.</small></div><div class="field"><label for="flourName">Twoja mąka (opcjonalnie)</label><input id="flourName" type="text" value="" maxlength="100" placeholder="Np. nazwa i oznaczenie z opakowania"></div></section>
+<section id="preferSection" class="card"><h2 id="preferTitle">4. Poolish</h2><div data-only="poolish"><div class="field"><label for="preferMode">Dojrzewanie poolishu</label><select id="preferMode"><option value="room">Tylko TO — temperatura pokojowa</option><option value="cold">TO + TK — start na blacie i lodówka</option></select></div></div><div class="grid2"><div class="field"><label for="share">Udział całej mąki w zaczynie (%)</label><input id="share" type="number" value="30" min="10" max="50" step="1"></div><div class="field"><label for="ph">Zaczyn w TO — czas (h)</label><input id="ph" type="number" value="12" min="0.5" max="20" step="0.5"></div><div class="field"><label for="preferTemp">Temperatura zaczynu w TO (°C)</label><input id="preferTemp" type="number" value="21" min="16" max="28" step="1"></div><div data-only="biga"><div class="field"><label for="bigaHyd">Hydratacja bigi (%)</label><input id="bigaHyd" type="number" value="45" min="45" max="50" step="1"></div></div><div id="preferColdField" hidden><div class="field"><label for="pcold">Poolish w lodówce — czas (h)</label><input id="pcold" type="number" value="24" min="12" max="24" step="0.5"></div></div><div data-only="poolish"><div class="field"><label for="startcm">Początkowy poziom w słoiczku (cm)</label><input id="startcm" type="number" value="5" min="2" max="10" step="0.5"></div></div></div><p id="preferHint" class="muted"></p></section>
+<section class="card"><h2 id="finalTitle">5. Fermentacja gotowego ciasta</h2><div class="grid2"><div class="field"><label for="temp">Temperatura gotowego ciasta w TO (°C)</label><input id="temp" type="number" value="21" min="16" max="28" step="1"></div><div class="field"><label for="yeast">Rodzaj drożdży</label><select id="yeast"><option value="fresh">Świeże</option><option value="instant">Suszone instant</option></select></div><div class="field"><label for="bulk">Ciasto przed kulkowaniem — TO (h)</label><input id="bulk" type="number" value="1" min="0" max="20" step="0.5"></div><div class="field"><label for="cold">Kulki w lodówce — TK (h)</label><input id="cold" type="number" value="0" min="0" max="48" step="0.5"></div><div class="field"><label for="proof">Kulki w TO przed pieczeniem (h)</label><input id="proof" type="number" value="4" min="1" max="8" step="0.5"></div><div class="field"><label for="fridge">Temperatura lodówki TK (°C)</label><input id="fridge" type="number" value="4" min="3" max="5" step="0.5"><small>Zmierz termometrem. To nie jest temperatura otoczenia dla tradycyjnej bigi.</small></div></div><p id="finalHint" class="muted"></p><details><summary>Korekta drożdży</summary><div class="field"><label for="adjust">Korekta dawki drożdży (%)</label><input id="adjust" type="number" value="100" min="50" max="150" step="5"><small>Punkt startowy 100%. Dawki są przybliżone, także przy uwzględnieniu całego cyklu.</small></div></details></section>
+<section class="card" aria-labelledby="validationTitle"><h2 id="validationTitle">Kontrola przepisu</h2><div id="validation" aria-live="polite" aria-atomic="true"></div><button id="recommended" class="secondary" type="button">Ustaw zalecany wariant</button><details><summary>Zasady, dokładność i źródła</summary><p>Limity są zachowawczym zakresem aplikacji. Model drożdży uwzględnia czas, temperaturę, TK oraz aktywność dojrzałego zaczynu, ale jest przybliżeniem i wymaga obserwacji. Nie potwierdza dojrzałości na podstawie samego zegara.</p><p>Poolish: 100% wody względem mąki zaczynu. Biga: 45–50% i chłodne miejsce 16–20°C. Bez zaczynu: wszystkie składniki łączysz w jednym etapie. Sól zawsze w g/kg gotowego ciasta.</p><p><a href="https://www.kingarthurbaking.com/pro/reference/preferment" target="_blank" rel="noopener">King Arthur: zaczyny i dojrzałość</a> · <a href="https://www.stadlermade.com/pizza/ingredients/poolish/" target="_blank" rel="noopener">Städler Made: poolish TO/TK</a> · <a href="https://www.gozney.com/blogs/recipes/100-biga-pizza-dough-recipe" target="_blank" rel="noopener">Gozney: biga</a> · <a href="https://eu.gozney.com/blogs/recipes/pizza-for-beginners-simple-pizza-dough-recipe" target="_blank" rel="noopener">Gozney: ciasto bezpośrednie</a></p></details></section>
+<section id="jarSection" class="card" data-result><h2>Poolish w słoiczku</h2><div class="visuals"><div class="jar-card"><div class="jar-title">Start · 100%</div><svg id="jarStart" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg><div id="startCmOut" class="jar-note"></div></div><div class="jar-card"><div class="jar-title">Około 2× · obserwuj szczyt</div><svg id="jarTarget" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg><div id="targetCmOut" class="jar-note"></div></div></div><small>To ilustracja w pojemniku o pionowych ściankach. Zostaw zapas na około 3× objętości. Poziom 2× nie potwierdza samodzielnie dojrzałości.</small></section>
+<section class="card" data-result><h2>Twój przepis</h2><div id="preferRecipe"><h3 id="preferRecipeTitle">Zrób poolish</h3><div id="poolish"></div></div><h3 id="finalRecipeTitle">Dodaj do dojrzałego poolishu</h3><div id="final"></div><h3>Podsumowanie</h3><div id="summary"></div><p class="muted">Drożdże do zaczynu i do ciasta końcowego są podane osobno. Nie dodawaj drugi raz dawki łącznej.</p><div class="btn-row"><button id="start" type="button">Zaczynam teraz</button><button id="copy" type="button" class="secondary">Kopiuj przepis</button><button id="save" type="button" class="secondary">Zapisz przepis</button></div></section>
+<section class="card" data-result><h2>Harmonogram</h2><ol id="timeline"></ol><small>Czasy planowane. Sprawdzaj napowietrzenie, strukturę i rzeczywistą temperaturę. „Zaczynam teraz” liczy etapy od faktycznego rozpoczęcia.</small></section>
+<section class="card"><h2>Zapisane przepisy</h2><div id="saved"></div><small>Lokalnie na tym urządzeniu.</small></section></div>
+<div id="view-guide" hidden><section class="card"><h2>Robię teraz</h2><div id="sessionBody"></div></section>
+<section class="card"><h2>Czy już gotowe?</h2><div class="field"><label for="readinessKind">Co oceniasz?</label><select id="readinessKind"><option value="poolish">Poolish</option><option value="biga">Biga</option><option value="balls">Kulki</option></select></div><div id="readinessCards" class="readiness"></div><p id="readinessAdvice" class="muted"></p><small>Ilustracje poglądowe. Oceń razem strukturę, zapach i wzrost. Nie próbuj surowego ciasta.</small></section></div>
+<div id="view-journal" hidden><section class="card"><h2>Dziennik wypieków</h2><p class="muted">Zapisz recepturę, rzeczywiste warunki i efekt. Wszystko zostaje na tym urządzeniu.</p><div class="field"><label for="entryName">Nazwa wypieku</label><input id="entryName" type="text" value="" maxlength="100" placeholder="Np. sobotnia margherita"></div><div class="grid2"><div class="field"><label for="entryDate">Data wypieku</label><input id="entryDate" type="date" value="" ></div><div class="field"><label for="entryRating">Ocena efektu</label><select id="entryRating"><option value="5">5 / 5 — świetnie</option><option value="4">4 / 5</option><option value="3">3 / 5</option><option value="2">2 / 5</option><option value="1">1 / 5</option></select></div></div><div class="field"><label for="actualTemp">Rzeczywista temperatura TO (°C, opcjonalnie)</label><input id="actualTemp" type="number" value="" min="10" max="35" step="0.5"></div><div class="field"><label for="entryNotes">Co wyszło i co zmienisz?</label><textarea id="entryNotes" maxlength="3000" placeholder="Mąka, wyrastanie, rozciąganie, smak, piec…"></textarea></div><div class="field"><label for="entryPhoto">Zdjęcie efektu (opcjonalnie)</label><input id="entryPhoto" type="file" value="" accept="image/jpeg,image/png,image/webp"><small>Maks. 10 MB. Zdjęcie zostanie zmniejszone przed zapisem.</small></div><div id="entrySource" class="muted"></div><div class="btn-row"><button id="addEntry" type="button">Zapisz wypiek</button><button id="exportJournal" type="button" class="secondary">Eksportuj dziennik</button></div><div id="journalMessage" role="status" aria-live="polite"></div></section><section class="card"><h2>Twoje wypieki</h2><div id="journalList"></div></section></div>
+</main><script src="calculator.js"></script><script src="app.js"></script></body></html>
