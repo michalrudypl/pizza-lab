@@ -75,6 +75,30 @@
     .progress>div{height:100%;background:var(--accent)}
     .field small{display:block;margin-top:6px}
     @media(max-width:560px){.grid2{grid-template-columns:1fr}.line{font-size:14px}.line b{white-space:normal}.readiness{gap:5px}}
+
+    .use-window{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;background:#fafbf8}
+    .use-window h3{margin:0 0 8px}
+    .window-times{font-size:19px;font-weight:750;margin:8px 0}
+    .window-note{font-size:13px;color:var(--muted)}
+    .window-track{height:34px;position:relative;display:flex;isolation:isolate;margin:32px 0 0;border-radius:8px;background:#f3dfb3}
+    .window-band{position:absolute;height:100%;background:#b9dec7;border:1px solid #82b397;z-index:0}
+    .window-track.uncertain .window-band{background:repeating-linear-gradient(135deg,#f0dab0,#f0dab0 6px,#fff2d8 6px,#fff2d8 12px);border-color:#bd9e64}
+    .window-plan,.window-now,.window-pick{position:absolute;top:-5px;height:44px;border-left:2px solid #182d27;z-index:1;pointer-events:none}
+    .window-now{border-left:2px dashed #356db5;z-index:2}
+    .window-now::before{content:'Teraz';position:absolute;font-size:11px;color:#356db5;top:-18px;left:0;transform:translateX(-50%)}
+    .window-pick{border-left:0}
+    .window-pick::before{content:'';position:absolute;top:17px;left:-5px;width:11px;height:11px;background:#182d27;border:2px solid white;border-radius:50%}
+    .window-axis{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-top:8px}
+    .window-axis span{max-width:34%;overflow-wrap:anywhere}
+    .window-axis span:nth-child(2){text-align:center}
+    .window-axis span:last-child{text-align:right}
+    .window-legend{font-size:12px;color:var(--muted);margin:10px 0}
+    .window-legend .green{display:inline-block;width:10px;height:10px;background:#b9dec7;border:1px solid #82b397;margin-right:4px}
+    .window-status{padding:10px;border-radius:10px;background:#fff0d4;font-size:14px;margin-top:10px}
+    .window-status.in-window{background:#dcece2}
+    .window-actions{display:flex;gap:6px;margin-top:10px}
+    .window-actions button{flex:1;padding:9px 4px;font-size:13px}
+    @media(max-width:560px){.use-window{padding:12px}.window-times{font-size:17px}}
 </style></head><body><main>
 <div class="tag">PWA · offline</div><h1>Pizza Lab</h1><p class="muted">Zaplanuj, przygotuj i zapisz swój kolejny wypiek.</p>
 <nav aria-label="Widoki aplikacji"><button data-view="calculator" aria-pressed="true">Kalkulator</button><button data-view="guide" aria-pressed="false">Robię teraz</button><button data-view="journal" aria-pressed="false">Moje wypieki</button></nav>
@@ -88,6 +112,7 @@
 <section class="card" aria-labelledby="validationTitle"><h2 id="validationTitle">Kontrola przepisu</h2><div id="validation" aria-live="polite" aria-atomic="true"></div><button id="recommended" class="secondary" type="button">Ustaw zalecany wariant</button><details><summary>Zasady, dokładność i źródła</summary><p>Limity są zachowawczym zakresem aplikacji. Model drożdży uwzględnia czas, temperaturę, TK oraz aktywność dojrzałego zaczynu, ale jest przybliżeniem i wymaga obserwacji. Nie potwierdza dojrzałości na podstawie samego zegara.</p><p>Poolish: 100% wody względem mąki zaczynu. Biga: 45–50% i chłodne miejsce 16–20°C. Bez zaczynu: wszystkie składniki łączysz w jednym etapie. Sól zawsze w g/kg gotowego ciasta.</p><p><a href="https://www.kingarthurbaking.com/pro/reference/preferment" target="_blank" rel="noopener">King Arthur: zaczyny i dojrzałość</a> · <a href="https://www.stadlermade.com/pizza/ingredients/poolish/" target="_blank" rel="noopener">Städler Made: poolish TO/TK</a> · <a href="https://www.gozney.com/blogs/recipes/100-biga-pizza-dough-recipe" target="_blank" rel="noopener">Gozney: biga</a> · <a href="https://eu.gozney.com/blogs/recipes/pizza-for-beginners-simple-pizza-dough-recipe" target="_blank" rel="noopener">Gozney: ciasto bezpośrednie</a></p></details></section>
 <section id="jarSection" class="card" data-result><h2>Poolish w słoiczku</h2><div class="visuals"><div class="jar-card"><div class="jar-title">Start · 100%</div><svg id="jarStart" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg><div id="startCmOut" class="jar-note"></div></div><div class="jar-card"><div class="jar-title">Około 2× · obserwuj szczyt</div><svg id="jarTarget" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg><div id="targetCmOut" class="jar-note"></div></div></div><small>To ilustracja w pojemniku o pionowych ściankach. Zostaw zapas na około 3× objętości. Poziom 2× nie potwierdza samodzielnie dojrzałości.</small></section>
 <section class="card" data-result><h2>Twój przepis</h2><div id="preferRecipe"><h3 id="preferRecipeTitle">Zrób poolish</h3><div id="poolish"></div></div><h3 id="finalRecipeTitle">Dodaj do dojrzałego poolishu</h3><div id="final"></div><h3>Podsumowanie</h3><div id="summary"></div><p class="muted">Drożdże do zaczynu i do ciasta końcowego są podane osobno. Nie dodawaj drugi raz dawki łącznej.</p><div class="btn-row"><button id="start" type="button">Zaczynam teraz</button><button id="copy" type="button" class="secondary">Kopiuj przepis</button><button id="save" type="button" class="secondary">Zapisz przepis</button></div></section>
+<section id="useWindowsSection" class="card" data-result><h2>Okna użycia</h2><p class="muted">Nie musisz celować w jedną minutę. Zobacz orientacyjny zapas dla już odważonych drożdży i stałej temperatury.</p><div class="field"><label for="windowKind">Który etap sprawdzasz?</label><select id="windowKind"></select></div><div id="plannedUseWindow"></div><small>To zakres kontroli i możliwego użycia po ocenie ciasta. Zielony kolor nie potwierdza gotowości i nie oznacza gwarantowanego „nic się nie stanie”.</small></section>
 <section class="card" data-result><h2>Harmonogram</h2><ol id="timeline"></ol><small>Czasy planowane. Sprawdzaj napowietrzenie, strukturę i rzeczywistą temperaturę. „Zaczynam teraz” liczy etapy od faktycznego rozpoczęcia.</small></section>
 <section class="card"><h2>Zapisane przepisy</h2><div id="saved"></div><small>Lokalnie na tym urządzeniu.</small></section></div>
 <div id="view-guide" hidden><section class="card"><h2>Robię teraz</h2><div id="sessionBody"></div></section>

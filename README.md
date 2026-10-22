@@ -13,7 +13,25 @@ Mobilna aplikacja PWA bez backendu: **poolish, biga i ciasto bez zaczynu**.
 - Dziennik do 20 wypieków: receptura, nazwa mąki, rzeczywista temperatura, uwagi, ocena i zdjęcie. Zakończona sesja może dołączyć rzeczywiste czasy etapów. Recepturę można ponownie wykorzystać. Eksport JSON zawiera także zdjęcia; import kopii nie jest obecnie dostępny.
 - Zdjęcie JPG/PNG/WebP do 10 MB jest lokalnie zmniejszane do maks. 640 px. Brak miejsca nie usuwa formularza ani nie udaje udanego zapisu.
 - Zachowane stare ustawienia i zapisane przepisy są ponownie walidowane, bez cichego poprawiania błędnych wartości. Brak pola metody oznacza dawny poolish.
-- PWA, service worker v4, offline po pierwszym udanym załadowaniu. Liczniki po otwarciu nadrobią upływ czasu. **Brak powiadomień w tle**, automatycznego przechodzenia etapów, konta i synchronizacji urządzeń.
+- PWA, service worker v5, offline po pierwszym udanym załadowaniu. Liczniki po otwarciu nadrobią upływ czasu. **Brak powiadomień w tle**, automatycznego przechodzenia etapów, konta i synchronizacji urządzeń.
+
+## Okna użycia i interaktywna oś czasu
+
+Pod harmonogramem receptury znajduje się wybór zaczynu lub kulek, orientacyjny przedział kontroli, kreska planowanej godziny, znacznik bieżącego czasu i suwak ±3 h z przyciskami −1 h / Plan / +1 h. Suwak nie zmienia receptury, dawki drożdży ani harmonogramu. Przyspieszenie użycia zaczynu może wymagać dalszego dojrzewania; opóźnienie jego użycia przesuwa pieczenie, jeśli dalsze etapy pozostaną tak samo długie.
+
+W „Robię teraz” oś dla aktualnego etapu bazuje na faktycznym `stageStartedAt`, a nie na dacie pieczenia. Dla chłodzonego poolishu okno jest pokazywane w etapie TK, nie podczas krótkiego startu w TO. Przedłużanie odliczania o 15 minut **nie przesuwa automatycznie okna dojrzałości**. Stan odtwarza się z zapisanych czasów po ponownym otwarciu.
+
+**Interpretacja:** zielony przedział oznacza czas na sprawdzenie i możliwe użycie po ocenie struktury. Nie oznacza potwierdzonej dojrzałości, prawdopodobieństwa sukcesu ani gwarancji, że godzina różnicy nie zaszkodzi. Poza przedziałem ciasto nie jest automatycznie uznawane za stracone. Przy ręcznej korekcie drożdży zakres jest kreskowany, a interfejs nie potwierdza zapasu czasowego.
+
+Szerokości są jawną, autorską heurystyką do planowania kontroli, nie eksperymentalnie zmierzonymi oknami z przytoczonych źródeł:
+
+- Poolish w TO: półszerokość 10% czasu, bazowo maks. 1,5 h, zwężana przy cieplejszych warunkach względem 21°C.
+- Biga: 12,5% czasu, bazowo maks. 2 h, z korektą względem 18°C.
+- Poolish w TK: 10% etapu w lodówce, bazowo maks. 2 h, z korektą względem 4°C; zapas dotyczy dalszego przebywania w tej temperaturze.
+- Kulki: 25% końcowego wyrastania, bazowo maks. 1,5 h, z korektą temperatury; zwężenie przy dużym udziale zaczynu, długim TK i hydratacji ponad 70%.
+- Półszerokości są zaokrąglane w dół do 15 minut, z minimalnym krokiem 15 minut. Okna są przycinane do już obowiązujących zakresów czasu aplikacji, również do łącznego limitu TO ciasta. Przycięcie późniejszej strony jest jawnie zaznaczone. Minuty pokazują skalę planu, nie dokładność prognozy.
+
+Źródła poniżej wspierają ocenę po wyglądzie i zależność od warunków; nie dostarczają uniwersalnej gwarancji ±1 h. Zmiana temperatury i faktyczna aktywność drożdży mogą przesunąć cały przedział. Wątpliwości rozstrzyga ocena zaczynu lub ciasta oraz doświadczenia zapisane w dzienniku.
 
 ## Granice i dokładność
 
