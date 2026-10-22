@@ -15,6 +15,15 @@
       --accent:#1c6a50; --accent-soft:#dcece2; --warn:#945b0c; --shadow:0 2px 18px rgba(23,43,37,.07);
     }
     *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    .notice{background:#fff5df;border:1px solid #eed7a7;border-radius:12px;padding:12px;margin:12px 0}
+    .notice.error{background:#fff0ee;border-color:#e8b6ae;color:#8c2e24}
+    .notice ul{margin:8px 0;padding-left:20px}
+    [aria-invalid=true]{border-color:#b43929;outline:1px solid #b43929}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    a{color:var(--accent)}
+    details{margin-top:12px}
+    summary{cursor:pointer;font-weight:650}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
     main{max-width:680px;margin:0 auto;padding:22px 16px max(80px, env(safe-area-inset-bottom))}
     h1{font-size:32px;line-height:1.05;letter-spacing:-.03em;margin:12px 0 8px}
@@ -85,8 +94,8 @@
     </div>
     <div class="field">
       <div class="label-row"><label for="saltkg">Sól (g / 1 kg gotowego ciasta)</label></div>
-      <input id="saltkg" type="number" step="1" min="10" max="40" value="28">
-      <small>Przykład: 28 oznacza 28 g soli na 1000 g gotowego ciasta.</small>
+      <input id="saltkg" type="number" step="0.5" min="10" max="24" value="18">
+      <small>18 oznacza 18 g soli na 1000 g ciasta (około 3% mąki przy 65% wody).</small>
     </div>
   </section>
 
@@ -98,11 +107,11 @@
         <input id="share" type="number" min="10" max="50" step="1" value="30">
       </div>
       <div class="field">
-        <div class="label-row"><label for="ph">Czas fermentacji poolish (h)</label></div>
-        <input id="ph" type="number" min="4" max="24" step="0.5" value="12">
+        <div class="label-row"><label for="ph">Poolish w TO — czas (h)</label></div>
+        <input id="ph" type="number" min="4" max="16" step="0.5" value="12">
       </div>
       <div class="field">
-        <div class="label-row"><label for="temp">Temperatura (°C)</label></div>
+        <div class="label-row"><label for="temp">Temperatura pokojowa TO (°C)</label></div>
         <input id="temp" type="number" min="16" max="28" step="1" value="21">
       </div>
       <div class="field">
@@ -111,14 +120,15 @@
       </div>
       <div class="field">
         <div class="label-row"><label for="adjust">Korekta dawki drożdży (%)</label></div>
-        <input id="adjust" type="number" min="30" max="200" step="5" value="100">
+        <input id="adjust" type="number" min="50" max="150" step="5" value="100">
       </div>
       <div class="field">
         <div class="label-row"><label for="startcm">Początkowa wysokość w słoiczku (cm)</label></div>
         <input id="startcm" type="number" min="2" max="10" step="0.5" value="5">
       </div>
     </div>
-    <small>Cel wizualizacji: wzrost do <b>160%</b> objętości początkowej. Dawka drożdży to nadal szacunek.</small>
+    <small id="poolishHint"></small>
+    <p class="muted">Poolish ma 100% hydratacji: tyle samo mąki i wody, bez soli. Tutaj cały czas poolish odbywa się w TO. Lodówka w sekcji 3 dotyczy dopiero kulek.</p>
   </section>
 
   <section class="card">
@@ -126,24 +136,43 @@
     <div class="grid2">
       <div class="field">
         <div class="label-row"><label for="bulk">Ciasto przed kulkowaniem — TO (h)</label></div>
-        <input id="bulk" type="number" min="0" max="8" step="0.5" value="1">
+        <input id="bulk" type="number" min="0" max="4" step="0.5" value="1">
       </div>
       <div class="field">
         <div class="label-row"><label for="cold">Kulki w lodówce — TK (h)</label></div>
-        <input id="cold" type="number" min="0" max="72" step="1" value="0">
+        <input id="cold" type="number" min="0" max="48" step="1" value="0">
       </div>
     </div>
     <div class="field">
-      <div class="label-row"><label for="proof">Kulki po TK / w TO (h)</label></div>
-      <input id="proof" type="number" min="1" max="10" step="0.5" value="4">
+      <div class="label-row"><label for="fridge">Temperatura lodówki TK (°C)</label></div>
+      <input id="fridge" type="number" min="3" max="5" step="0.5" value="4">
+      <small>Zmierz termometrem. Model obsługuje TK wyłącznie w 3–5°C.</small>
     </div>
+    <div class="field">
+      <div class="label-row"><label for="proof">Kulki po TK / w TO (h)</label></div>
+      <input id="proof" type="number" min="1" max="8" step="0.5" value="4">
+    </div>
+    <small id="finalHint"></small>
     <div class="field">
       <div class="label-row"><label for="bake">Data i godzina pieczenia</label></div>
       <input id="bake" type="datetime-local">
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" aria-labelledby="validationTitle">
+    <h2 id="validationTitle">Kontrola przepisu</h2>
+    <div id="validation" aria-live="polite" aria-atomic="true"></div>
+    <button id="recommended" class="secondary" type="button">Ustaw zalecany wariant</button>
+    <details>
+      <summary>Zasady i źródła</summary>
+      <p>Limity aplikacji są zachowawczym zakresem dla domowego poolish w TO, a nie uniwersalną granicą fermentacji. Dawka drożdży jest przybliżeniem dla poolish; nie przewiduje dokładnie całego cyklu ciasta ani wpływu mąki.</p>
+      <p>Poolish: maks. 18 h przy 16–20°C, 16 h przy 21–23°C, 12 h przy 24–26°C, 8 h przy 27–28°C. Zwykle warto zacząć od 12–16 h przy 20–22°C i oceniać dojrzałość.</p>
+      <p>Dłuższy wariant poolish z chłodzeniem wymaga innej receptury. 50 h całego procesu może obejmować poolish i późniejszą fermentację gotowego ciasta.</p>
+      <p><a href="https://www.kingarthurbaking.com/pro/reference/preferment" target="_blank" rel="noopener">King Arthur: poolish, temperatura i dojrzałość</a> · <a href="https://www.stadlermade.com/pizza/ingredients/poolish/" target="_blank" rel="noopener">Städler Made: wariant TO i wariant z chłodzeniem</a> · <a href="https://www.pizzanapoletana.org/it/ricetta_pizza_napoletana" target="_blank" rel="noopener">AVPN: proporcje soli w pizzy bezpośredniej</a></p>
+    </details>
+  </section>
+
+  <section class="card" data-result>
     <h2>Wizualizacja poolish</h2>
     <div class="visuals">
       <div class="jar-card">
@@ -152,15 +181,15 @@
         <div class="jar-note"><span id="startCmOut">5,0</span> cm</div>
       </div>
       <div class="jar-card">
-        <div class="jar-title">Cel · 160%</div>
+        <div class="jar-title">Około 2× · obserwuj szczyt</div>
         <svg id="jarTarget" class="jar-svg" viewBox="0 0 140 118" aria-hidden="true"></svg>
-        <div class="jar-note"><span id="targetCmOut">8,0</span> cm</div>
+        <div class="jar-note"><span id="targetCmOut">10,0</span> cm</div>
       </div>
     </div>
-    <small>Zakładamy prosty pojemnik o pionowych ściankach — wtedy wysokość rośnie proporcjonalnie do objętości.</small>
+    <small>Przykład wzrostu w pojemniku o pionowych ściankach. Zostaw miejsce na około 3× objętości początkowej. Dojrzały poolish jest mocno napowietrzony; wierzch zaczyna się spłaszczać lub lekko zapadać. Sam poziom 2× nie potwierdza gotowości.</small>
   </section>
 
-  <section class="card">
+  <section class="card" data-result>
     <h2>Przepis</h2>
     <h3>1. Zrób poolish</h3>
     <div id="poolish"></div>
@@ -174,10 +203,10 @@
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" data-result>
     <h2>Harmonogram</h2>
     <ol id="timeline"></ol>
-    <small class="warning">Czasy są orientacyjne. Obserwuj strukturę, napowietrzenie i faktyczny wzrost — 160% objętości nie gwarantuje idealnej dojrzałości poolish.</small>
+    <small class="warning">Czasy są orientacyjne. Użyj poolish przy szczycie aktywności; wyraźne opadnięcie i rozrzedzenie wskazują na przejrzenie. Kulki powinny być napowietrzone i łatwo się rozciągać.</small>
   </section>
 
   <section class="card">
@@ -187,9 +216,10 @@
   </section>
 </main>
 
+<script src="calculator.js"></script>
 <script>
 'use strict';
-const ids=['balls','weight','hyd','saltkg','share','ph','temp','yeast','adjust','startcm','bulk','cold','proof','bake'];
+const ids=['balls','weight','hyd','saltkg','share','ph','temp','yeast','adjust','startcm','bulk','cold','fridge','proof','bake'];
 const el=id=>document.getElementById(id);
 const fmt=(x,n=1)=>Number(x).toLocaleString('pl-PL',{maximumFractionDigits:n,minimumFractionDigits:n});
 const line=(k,v)=>`<div class="line"><span>${k}</span><b>${v}</b></div>`;
@@ -226,20 +256,32 @@ function render(){
   el('ballsVal').textContent=v.balls;
   el('hydVal').textContent=v.hyd+'%';
 
-  const total=n('balls')*n('weight');
-  const hyd=n('hyd')/100;
-  const salt=(total*n('saltkg'))/1000;
-  const share=n('share')/100;
-  const yPctBase=.25*Math.pow(12/n('ph'),1.2)*Math.pow(2,(21-n('temp'))/10)*(n('adjust')/100);
-  const yPct=(v.yeast==='fresh'?yPctBase:yPctBase/3); // % mąki w poolish
-  const flour=(total-salt)/(1+hyd+(share*yPct/100));
-  const water=flour*hyd;
-  const pf=flour*share;
-  const pw=pf;
-  const yeast=pf*(yPct/100);
-  const ff=flour-pf;
-  const fw=water-pw;
-  const saltPct=(salt/flour)*100;
+  const maxPoolish=PizzaRules.poolishMax(n('temp'));
+  el('ph').max=maxPoolish;
+  el('poolishHint').textContent=`Przy ${v.temp || '—'}°C: 4–${maxPoolish} h w zakresie aplikacji. Drożdże są szacunkiem; obserwuj szczyt aktywności.`;
+  el('finalHint').textContent=`Po poolish: łącznie 2–${PizzaRules.finalMax(n('temp'))} h w TO, wliczając 30 min wyrabiania. TK: 0–48 h; po TK co najmniej 2 h w TO.`;
+  const result=PizzaRules.calculate(v);
+  ids.forEach(id=>el(id).removeAttribute('aria-invalid'));
+  result.errors.forEach(e=>el(e.field).setAttribute('aria-invalid','true'));
+  const box=el('validation');
+  box.replaceChildren();
+  if(result.errors.length || result.warnings.length){
+    const notice=document.createElement('div');
+    notice.className='notice'+(result.errors.length?' error':'');
+    const heading=document.createElement('b');
+    heading.textContent=result.errors.length?'Popraw ustawienia — przepis jest zablokowany.':'Sprawdź przed przygotowaniem';
+    const list=document.createElement('ul');
+    [...result.errors.map(e=>e.text),...result.warnings].forEach(text=>{
+      const li=document.createElement('li'); li.textContent=text; list.append(li);
+    });
+    notice.append(heading,list); box.append(notice);
+  }else box.textContent='Ustawienia mieszczą się w zakresie aplikacji. Dojrzałość potwierdź wyglądem poolish i ciasta.';
+  const blocked=result.errors.length>0;
+  document.querySelectorAll('[data-result]').forEach(section=>section.hidden=blocked);
+  el('copy').disabled=el('save').disabled=blocked;
+  latest='';
+  if(blocked) return;
+  const {total,hyd,salt,share,yPct,flour,water,pf,pw,yeast,ff,fw,saltPct}=result;
 
   el('poolish').innerHTML=
     line('Mąka',fmt(pf)+' g')+
@@ -263,20 +305,21 @@ function render(){
     line('Drożdże w poolish',fmt(yPct,3)+'% mąki w poolish');
 
   const startCm=n('startcm');
-  const targetCm=startCm*1.6;
+  const targetCm=startCm*2;
+  const scaleCm=Math.max(12,targetCm*1.2);
   el('startCmOut').textContent=fmt(startCm,1);
   el('targetCmOut').textContent=fmt(targetCm,1);
-  drawJar('jarStart', startCm/10);
-  drawJar('jarTarget', targetCm/10);
+  drawJar('jarStart', startCm/scaleCm);
+  drawJar('jarTarget', targetCm/scaleCm);
 
   const bake=new Date(v.bake), valid=Number.isFinite(bake.getTime());
   const steps=[
-    ['Przygotuj poolish', n('ph')],
+    [`Przygotuj poolish — TO ${v.temp}°C`, n('ph')],
     ['Wyrób ciasto (ok. 30 min)', 0.5],
-    ['Fermentacja ciasta w TO', n('bulk')],
+    ...(n('bulk') ? [[`Fermentacja ciasta w TO ${v.temp}°C`, n('bulk')]] : []),
     ['Podziel i uformuj kulki', 0],
-    ...(n('cold') ? [['Kulki w lodówce (TK)', n('cold')]] : []),
-    ['Wyrastanie kulek w TO', n('proof')]
+    ...(n('cold') ? [[`Kulki w lodówce — TK ${v.fridge}°C`, n('cold')]] : []),
+    [`Wyrastanie kulek w TO ${v.temp}°C`, n('proof')]
   ];
 
   if(valid){
@@ -291,7 +334,7 @@ function render(){
   }
 
   latest=
-`PIZZA LAB\n${v.balls} kulek po ${v.weight} g\nMasa ciasta: ${fmt(total)} g\n\nPOOLISH:\n- mąka ${fmt(pf)} g\n- woda ${fmt(pw)} g\n- drożdże ${fmt(yeast,3)} g (${v.yeast})\n- fermentacja ${v.ph} h w ${v.temp}°C\n\nDODAJ DO POOLISH:\n- mąka ${fmt(ff)} g\n- woda ${fmt(fw)} g\n- sól ${fmt(salt)} g\n\nFERMENTACJA KOŃCOWA:\n- ciasto w TO ${v.bulk} h\n- kulki w TK ${v.cold} h\n- kulki w TO ${v.proof} h\n\nPOOLISH W SŁOIKU:\n- start ${fmt(startCm,1)} cm\n- cel 160% = ${fmt(targetCm,1)} cm\n\nPIECZENIE: ${valid?fmtDate(bake):'nie ustawiono'}`;
+`PIZZA LAB\n${v.balls} kulek po ${v.weight} g\nMasa ciasta: ${fmt(total)} g\n\nPOOLISH:\n- mąka ${fmt(pf)} g\n- woda ${fmt(pw)} g\n- drożdże ${fmt(yeast,3)} g (${v.yeast})\n- fermentacja ${v.ph} h w ${v.temp}°C\n\nDODAJ DO POOLISH:\n- mąka ${fmt(ff)} g\n- woda ${fmt(fw)} g\n- sól ${fmt(salt)} g\n\nFERMENTACJA KOŃCOWA:\n- ciasto w TO ${v.bulk} h\n- kulki w TK ${v.cold} h (${v.fridge}°C)\n- kulki w TO ${v.proof} h\n\nPOOLISH W SŁOIKU:\n- start ${fmt(startCm,1)} cm\n- poglądowe 2× = ${fmt(targetCm,1)} cm; obserwuj bąbelki i szczyt aktywności\n\nPIECZENIE: ${valid?fmtDate(bake):'nie ustawiono'}\n\nUWAGI: Dawka drożdży to szacunek dla poolish, a harmonogram wymaga obserwacji.\n${result.warnings.join('\n')}`;
 
   saveJson('pizzaSettings', v);
 }
@@ -326,11 +369,16 @@ else {
   el('bake').value=local.toISOString().slice(0,16);
 }
 ids.forEach(id=>el(id).addEventListener('input', render));
-el('copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(latest); alert('Skopiowano przepis'); }catch{ alert('Kopiowanie jest niedostępne w tej przeglądarce.'); } };
+el('copy').onclick=async()=>{ if(!latest) return; try{ await navigator.clipboard.writeText(latest); alert('Skopiowano przepis'); }catch{ alert('Kopiowanie jest niedostępne w tej przeglądarce.'); } };
 el('save').onclick=()=>{
+  if(!latest) return;
   const name=prompt('Nazwa przepisu',`Pizza ${el('balls').value} × ${el('weight').value} g`);
   if(!name) return;
   const arr=getSaved(); arr.push({name,settings:read()}); saveJson('pizzaRecipes', arr); renderSaved();
+};
+el('recommended').onclick=()=>{
+  Object.entries(PizzaRules.defaults).forEach(([id,value])=>{el(id).value=value;});
+  render();
 };
 render();
 renderSaved();
