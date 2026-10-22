@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182d27">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pizza Lab">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Pizza Lab — kalkulator poolish</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{font:16px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:#f4f3ed;color:#182d27;margin:0}main{max-width:640px;margin:auto;padding:24px 18px max(70px,env(safe-area-inset-bottom))}h1{font-size:34px;margin:12px 0 0;letter-spacing:-.04em}h2{font-size:20px;margin:0 0 14px;letter-spacing:-.02em}p{margin:6px 0 18px}.card{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 2px 15px #172b2510}label{display:block;margin:16px 0 6px;font-weight:600}input,select,button{box-sizing:border-box;width:100%;min-height:44px;padding:10px 12px;border:1px solid #cbd5cd;border-radius:10px;font:inherit;background:white;color:inherit}input[type=range]{min-height:25px;padding:0;accent-color:#1c6a50}button{background:#1c6a50;color:white;font-weight:650;border:0;margin:7px 0;cursor:pointer}.secondary{background:#e3ede7;color:#182d27}.delete{background:#a33}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #268664;outline-offset:2px}small,.muted{color:#607169}small{display:block;margin-top:8px;line-height:1.5}.line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #edf0ed;padding:10px 0}.line b{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.tag{background:#dcece2;border-radius:8px;padding:7px 10px;display:inline-block;font-size:13px;font-weight:650}.warning{color:#945b0c}ol{padding-left:24px}ol li{margin:13px 0;line-height:1.5}.saved-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid #e6ece7;padding:8px 0}.saved-row span{flex:1;min-width:0;overflow-wrap:anywhere}.saved-row button{width:auto;flex:none;padding:8px;font-size:13px}.info{padding:12px 14px;background:#f2f6f3;border-radius:12px;margin-top:12px;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid label{margin:0 0 6px}@media(max-width:400px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<span class="tag">PWA · działa offline</span>
+<h1>Pizza Lab</h1>
+<p class="muted">Kalkulator pizzy na poolish: składniki, drożdże i harmonogram.</p>
+<section class="card"><h2>1. Ciasto</h2>
+<label for="balls">Liczba kulek: <span id="ballsVal">4</span></label><input id="balls" type="range" min="1" max="12" step="1" value="4">
+<label for="weight">Waga kulki (g)</label><input id="weight" type="number" min="150" max="500" step="5" value="250">
+<label for="hyd">Hydratacja: <span id="hydVal">65%</span></label><input id="hyd" type="range" min="55" max="80" value="65">
+<label for="salt">Sól (% masy mąki)</label><input id="salt" type="number" step="0.1" min="1" max="4" value="2.8">
+</section>
+<section class="card"><h2>2. Poolish</h2>
+<label for="share">Udział całej mąki w poolish (%)</label><input id="share" type="number" min="10" max="50" value="30">
+<label for="ph">Czas fermentacji poolish (h)</label><input id="ph" type="number" min="4" max="24" step=".5" value="12">
+<label for="temp">Temperatura poolish (°C)</label><input id="temp" type="number" min="16" max="28" value="21">
+<label for="yeast">Rodzaj drożdży</label><select id="yeast"><option value="fresh">Świeże</option><option value="instant">Suszone instant</option></select>
+<label for="adjust">Korekta drożdży (%)</label><input id="adjust" type="number" min="30" max="200" step="5" value="100">
+<small>Cel: 160% początkowej objętości. To przybliżenie, a nie gwarancja; po pierwszej próbie skoryguj dawkę.</small>
+</section>
+<section class="card"><h2>3. Fermentacja ciasta</h2>
+<label for="bulk">Fermentacja przed kulkowaniem, TO (h)</label><input id="bulk" type="number" min="0" max="8" step=".5" value="1">
+<label for="cold">Kulki w lodówce, TK (h)</label><input id="cold" type="number" min="0" max="72" step="1" value="0">
+<label for="proof">Kulki w TO / po wyjęciu z TK (h)</label><input id="proof" type="number" min="1" max="10" step=".5" value="4">
+<label for="bake">Planowany termin pieczenia</label><input id="bake" type="datetime-local">
+</section>
+<section class="card"><h2>Przepis</h2>
+<h2>Etap 1 · Przygotuj poolish</h2><div id="poolish"></div>
+<h2 style="margin-top:24px">Etap 2 · Dodaj do poolish</h2><div id="final"></div>
+<h2 style="margin-top:24px">Podsumowanie</h2><div id="summary"></div>
+<button id="copy" type="button">Kopiuj przepis</button><button id="save" type="button" class="secondary">Zapisz przepis</button>
+</section>
+<section class="card"><h2>Harmonogram</h2><ol id="timeline"></ol><small class="warning">Czasy są orientacyjne. Obserwuj wzrost i kondycję ciasta — 160% objętości nie musi oznaczać pełnej dojrzałości poolish.</small></section>
+<section class="card"><h2>Zapisane przepisy</h2><div id="saved"></div><small>Zapisywane lokalnie na tym urządzeniu. Usunięcie danych Safari może je skasować.</small></section>
+</main>
+<script>
+'use strict';
+const ids=['balls','weight','hyd','salt','share','ph','temp','yeast','adjust','bulk','cold','proof','bake'];
+const el=id=>document.getElementById(id);
+const f=(x,n=1)=>Number(x).toLocaleString('pl-PL',{maximumFractionDigits:n,minimumFractionDigits:n});
+const line=(name,value)=>'<div class="line"><span>'+name+'</span><b>'+value+'</b></div>';
+const fmtDate=date=>date.toLocaleString('pl-PL',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const read=()=>Object.fromEntries(ids.map(id=>[id,el(id).value]));
+const getSaved=()=>{try{return JSON.parse(localStorage.getItem('pizzaRecipes')||'[]')}catch{return []}};
+const storage=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
+let latest='';
+function render(){
+ const v=read();const n=k=>Number(v[k]);
+ el('ballsVal').textContent=v.balls;el('hydVal').textContent=v.hyd+'%';
+ const valid=Number.isFinite(n('ph'))&&n('ph')>0&&n('balls')>0&&n('weight')>0&&n('share')>=10&&n('share')<=50&&n('hyd')>=55&&n('hyd')<=80&&n('salt')>0&&n('temp')>=16&&n('temp')<=28&&n('adjust')>0&&n('bulk')>=0&&n('cold')>=0&&n('proof')>0;
+ if(!valid){el('poolish').textContent='Sprawdź wartości parametrów.';el('final').textContent='';el('summary').textContent='';el('timeline').textContent='';return}
+ const yPct=.25*Math.pow(12/n('ph'),1.2)*Math.pow(2,(21-n('temp'))/10)*n('adjust')/100/(v.yeast==='fresh'?1:3);
+ const total=n('balls')*n('weight'),share=n('share')/100,flour=total/(1+n('hyd')/100+n('salt')/100+share*yPct/100),water=flour*n('hyd')/100,pf=flour*share,pw=pf,yeast=pf*yPct/100,ff=flour-pf,fw=water-pw,salt=flour*n('salt')/100;
+ el('poolish').innerHTML=line('Mąka',f(pf)+' g')+line('Woda',f(pw)+' g')+line('Drożdże '+(v.yeast==='fresh'?'świeże':'instant'),f(yeast,3)+' g');
+ el('final').innerHTML=line('Cały poolish',f(pf+pw+yeast)+' g')+line('Mąka',f(ff)+' g')+line('Woda',f(fw)+' g')+line('Sól',f(salt)+' g');
+ el('summary').innerHTML=line('Kulki',v.balls+' × '+v.weight+' g')+line('Mąka razem',f(flour)+' g')+line('Woda razem',f(water)+' g')+line('Hydratacja',v.hyd+'%');
+ const bake=new Date(v.bake),hasDate=Number.isFinite(bake.getTime()),steps=[['Przygotuj poolish',n('ph')],['Wyrób ciasto',.5],['Fermentacja ciasta w TO',n('bulk')],['Uformuj '+v.balls+' kulek',0],...(n('cold')?[['Kulki w lodówce (TK)',n('cold')]]:[]),['Kulki w temperaturze pokojowej',n('proof')]];
+ let t=new Date(bake.getTime()-steps.reduce((a,s)=>a+s[1],0)*3600000);
+ el('timeline').innerHTML=hasDate?steps.map(([name,h])=>{const start=fmtDate(t);t=new Date(t.getTime()+h*3600000);return '<li><b>'+start+'</b> — '+name+(h?' ('+f(h,1)+' h)':'')+'</li>'}).join('')+'<li><b>'+fmtDate(bake)+'</b> — Pieczenie</li>':'<li>Ustaw datę pieczenia.</li>';
+ latest='PIZZA LAB\n'+v.balls+' kulek po '+v.weight+' g\nPOOLISH: '+f(pf)+' g mąki, '+f(pw)+' g wody, '+f(yeast,3)+' g drożdży '+(v.yeast==='fresh'?'świeżych':'instant')+'; '+v.ph+' h w '+v.temp+'°C\nDODAJ: '+f(ff)+' g mąki, '+f(fw)+' g wody, '+f(salt)+' g soli\nFERMENTACJA: '+v.bulk+' h TO, '+v.cold+' h TK, '+v.proof+' h kulek TO\nPIECZENIE: '+(hasDate?fmtDate(bake):'nie ustawiono');
+ storage('pizzaSettings',v);
+}
+function saved(){
+ const arr=getSaved(),target=el('saved');target.replaceChildren();
+ if(!arr.length){target.textContent='Brak zapisanych przepisów.';return}
+ arr.forEach((recipe,i)=>{
+  const row=document.createElement('div');row.className='saved-row';
+  const name=document.createElement('span');name.textContent=recipe.name;
+  const load=document.createElement('button');load.type='button';load.textContent='Wczytaj';
+  load.onclick=()=>{ids.forEach(id=>{if(recipe.settings[id]!==undefined)el(id).value=recipe.settings[id]});render()};
+  const del=document.createElement('button');del.type='button';del.className='delete';del.textContent='Usuń';
+  del.onclick=()=>{const newer=getSaved();newer.splice(i,1);storage('pizzaRecipes',newer);saved()};
+  row.append(name,load,del);target.append(row);
+ });
+}
+let previous=null;try{previous=JSON.parse(localStorage.getItem('pizzaSettings')||'null')}catch{}
+if(previous)ids.forEach(id=>{if(previous[id]!==undefined)el(id).value=previous[id]});
+else{const date=new Date(Date.now()+2*86400000);date.setHours(15,0,0,0);const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);el('bake').value=local.toISOString().slice(0,16)}
+ids.forEach(id=>el(id).addEventListener('input',render));
+el('copy').onclick=async()=>{try{await navigator.clipboard.writeText(latest);alert('Skopiowano przepis')}catch{alert('Kopiowanie niedostępne. Spróbuj w Safari.')}};
+el('save').onclick=()=>{if(!latest)return;const name=prompt('Nazwa przepisu','Pizza '+el('balls').value+' × '+el('weight').value+' g');if(!name)return;const arr=getSaved();arr.push({name,settings:read()});storage('pizzaRecipes',arr);saved()};
+render();saved();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
