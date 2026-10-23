@@ -16,13 +16,13 @@ function useReference(){const keep={balls:el('balls').value,weight:el('weight').
 function sync(v){
  const prefer=v.method!=='direct',coldPrefer=v.method==='poolish'&&v.preferMode==='cold',cold=Number(v.cold)>0||coldPrefer;
  el('preferFields').hidden=!prefer;el('preferDoseField').hidden=!prefer;el('preferColdField').hidden=!coldPrefer;
- el('fridgeField').hidden=!cold;el('coldPositionField').hidden=Number(v.cold)===0;el('ddtPreferField').hidden=!prefer;
+ el('fridgeField').hidden=!cold;el('coldPositionField').hidden=Number(v.cold)===0;el('preColdProofField').hidden=!(v.method==='poolish'&&Number(v.cold)>0&&v.coldPosition==='balls');el('ddtPreferField').hidden=!prefer;
  document.querySelectorAll('[data-method]').forEach(n=>n.hidden=n.dataset.method!==v.method);
  el('manualDoses').hidden=v.yeastMode!=='manual';el('useCold').checked=cold;
  el('share').min=v.method==='biga'?20:10;el('preferTemp').max=v.method==='biga'?20:28;
  el('ph').min=v.method==='biga'?12:coldPrefer?.5:4;el('ph').max=coldPrefer?2:24;
  const reference=PizzaRules.referenceStatus(v),target=el('sourceInfo');target.replaceChildren();
- if(reference){const a=document.createElement('a');a.href=reference.url;a.target='_blank';a.rel='noopener';a.textContent=reference.name;const note=document.createElement('p');note.textContent=reference.note;target.append(a,note);}
+ if(reference){const label=document.createElement(reference.url?'a':'strong');if(reference.url){label.href=reference.url;label.target='_blank';label.rel='noopener';}label.textContent=reference.name;const note=document.createElement('p');note.textContent=reference.note;target.append(label,note);}
  renderDDT();
 }
 function renderDDT(){
@@ -39,7 +39,7 @@ function render(){
  el('doseNote').textContent=r.reference.adapted?'Własna adaptacja. Dawki ze źródła nie dopasowują się automatycznie do nowego czasu.':'Dawki z receptury źródłowej. Gotowość sprawdź przed użyciem.';
  el('preferRecipe').hidden=!prefer;el('preferTitle').textContent=v.method==='biga'?'1. Biga':'1. Poolish';el('finalTitle').textContent=prefer?'2. Dodaj do dojrzałego zaczynu':'Połącz składniki';
  if(prefer)writeRows('preferIngredients',[['Mąka',g(r.pf)],['Woda',g(r.pw)],['Drożdże '+(v.yeast==='fresh'?'świeże':'instant'),yg(r.preferYeast)]]);
- writeRows('finalIngredients',[...(prefer?[['Cały dojrzały zaczyn',g(r.pf+r.pw+r.preferYeast)]]:[]),['Mąka',g(r.ff)],['Woda',g(r.fw)],[`Sól (${fmt(r.saltPct,2)}% mąki)`,g(r.salt)],['Drożdże '+(prefer?'dodatkowo':'do ciasta'),yg(r.finalYeast)]]);
+ writeRows('finalIngredients',[...(prefer?[['Cały dojrzały zaczyn',g(r.pf+r.pw+r.preferYeast)]]:[]),['Mąka',g(r.ff)],['Woda',g(r.fw)],[`Sól (${fmt(r.saltPct,2)}% mąki)`,g(r.salt)],...(r.finalYeast>0?[['Drożdże '+(prefer?'dodatkowo':'do ciasta'),yg(r.finalYeast)]]:[])]);
  const stages=PizzaRules.timeline(r,v.bake),start=el('startInfo');start.replaceChildren();
  const label=document.createElement('span'),value=document.createElement('strong');
  label.textContent=stages.length?'Zacznij przygotowanie':'Czas przygotowania';value.textContent=stages.length?when(stages[0].startsAt):fmt(r.hours,2)+' h';start.append(label,value);
@@ -47,7 +47,7 @@ function render(){
  const timeline=el('timeline');timeline.replaceChildren();(stages.length?stages:r.steps).forEach(s=>{const item=document.createElement('li'),title=document.createElement('b'),note=document.createElement('small');title.textContent=(stages.length?when(s.startsAt)+' — ':'')+s.title+(s.hours?' · '+fmt(s.hours,2)+' h':'');note.textContent=s.instruction;item.append(title,note);timeline.append(item);});
  const warnings=el('warnings');warnings.replaceChildren();r.warnings.forEach(w=>{const item=document.createElement('li');item.textContent=w;warnings.append(item);});el('warningDetails').hidden=!r.warnings.length;el('warningTitle').textContent=`Uwagi do przepisu (${r.warnings.length})`;
  const selected=el('windowKind').value;el('windowKind').replaceChildren();PizzaRules.useWindows(r).forEach(w=>{const option=document.createElement('option');option.value=w.kind;option.textContent=w.label;el('windowKind').append(option);});if([...el('windowKind').options].some(o=>o.value===selected))el('windowKind').value=selected;renderWindow();
- latest=`PIZZA LAB — ${PizzaRules.labels[v.method]}\n${el('recipeMeta').textContent}\n${v.flourName?'Mąka: '+v.flourName+'\n':''}Sól: ${fmt(r.salt)} g (${fmt(r.saltPct,2)}% mąki)\nDrożdże: ${v.yeast==='fresh'?'świeże':'instant'}\n`+(prefer?`\nZACZYN\nMąka ${g(r.pf)}\nWoda ${g(r.pw)}\nDrożdże ${yg(r.preferYeast)}\n\nDODAJ DO CAŁEGO DOJRZAŁEGO ZACZYNU\n`:'\nSKŁADNIKI\n')+`Mąka ${g(r.ff)}\nWoda ${g(r.fw)}\nSól ${g(r.salt)}\nDrożdże ${yg(r.finalYeast)}\n\nHARMONOGRAM\n`+(stages.length?stages:r.steps).map(s=>(stages.length?when(s.startsAt)+' — ':'')+s.title+(s.hours?' / '+fmt(s.hours,2)+' h':'')).join('\n')+`\n\n${el('doseNote').textContent}\nBaza: ${r.reference.url}\n`+r.warnings.join('\n');
+ latest=`PIZZA LAB — ${PizzaRules.labels[v.method]}\n${el('recipeMeta').textContent}\n${v.flourName?'Mąka: '+v.flourName+'\n':''}Sól: ${fmt(r.salt)} g (${fmt(r.saltPct,2)}% mąki)\nDrożdże: ${v.yeast==='fresh'?'świeże':'instant'}\n`+(prefer?`\nZACZYN\nMąka ${g(r.pf)}\nWoda ${g(r.pw)}\nDrożdże ${yg(r.preferYeast)}\n\nDODAJ DO CAŁEGO DOJRZAŁEGO ZACZYNU\n`:'\nSKŁADNIKI\n')+`Mąka ${g(r.ff)}\nWoda ${g(r.fw)}\nSól ${g(r.salt)}`+(r.finalYeast>0?`\nDrożdże ${yg(r.finalYeast)}`:'')+`\n\nHARMONOGRAM\n`+(stages.length?stages:r.steps).map(s=>(stages.length?when(s.startsAt)+' — ':'')+s.title+(s.hours?' / '+fmt(s.hours,2)+' h':'')).join('\n')+`\n\n${el('doseNote').textContent}`+(r.reference.url?`\nBaza: ${r.reference.url}`:'')+`\n`+r.warnings.join('\n');
  save();
 }
 function renderWindow(){
@@ -68,13 +68,19 @@ function renderWindow(){
 }
 function updateNow(){if(!chart||chart.start===undefined)return;const elapsed=(Date.now()-chart.start)/3600000,pos=chart.position(elapsed);chart.now.hidden=pos<0||pos>100;if(!chart.now.hidden)chart.now.style.left=pos+'%';chart.live.textContent=chart.now.hidden?'':'Niebieska kreska: teraz według planu.';}
 function setCold(enabled){
- if(!enabled){apply({cold:0});if(el('method').value==='poolish'&&el('preferMode').value==='cold')apply({preferMode:'room',ph:15,pcold:0});}
- else if(el('method').value==='poolish'){apply({preferMode:'cold',ph:1,pcold:24});}
+ if(!enabled){apply({cold:0,preColdProof:0});if(el('method').value==='poolish'){if(el('preferMode').value==='cold')apply({preferMode:'room',ph:12,pcold:0});apply({proof:9});}}
+ else if(el('method').value==='poolish'){apply({preferMode:'room',ph:12,pcold:0,cold:24,coldPosition:'balls',preColdProof:1.5,proof:2.5});}
  else apply({cold:24});
  render();
 }
 apply(PizzaRules.referenceSettings('poolish'));
-const previous=load();if(previous)apply(PizzaRules.migrateSettings(previous));
+const previous=load();if(previous){
+  let version='';try{version=localStorage.getItem('pizzaPoolishBaseVersion')||'';}catch{}
+  if(previous.method==='poolish'&&(previous.yeastMode??'reference')==='reference'&&version!=='2'){
+    apply({...PizzaRules.referenceSettings('poolish'),balls:previous.balls??4,weight:previous.weight??250,bake:previous.bake??'',yeast:previous.yeast??'fresh',flourName:previous.flourName??''});
+  }else apply(PizzaRules.migrateSettings(previous));
+  try{localStorage.setItem('pizzaPoolishBaseVersion','2');}catch{}
+}
 if(!previous){const d=new Date(Date.now()+48*3600000);d.setHours(15,0,0,0);el('bake').value=dateInput(d);}
 savedFields.forEach(id=>el(id).addEventListener(el(id).tagName==='SELECT'?'change':'input',()=>{
  el('copyStatus').textContent='';

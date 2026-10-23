@@ -10,11 +10,11 @@ Przycisk „Wczytaj recepturę źródłową” ładuje proporcje oraz opisany pl
 
 | Baza | Składniki na 1 kg całej mąki, drożdże świeże |
 | --- | --- |
-| Poolish — Städler Made | 700 g wody, 25 g soli; 70% mąki w zaczynie; 1 g drożdży w zaczynie i 1 g dodatkowo |
+| Poolish — przepis ze zrzutów | 630 g wody, 30 g soli; 30% mąki w poolish (300 g mąki + 300 g wody); 1,5 g świeżych drożdży tylko do poolish |
 | Biga — Städler Made | 700 g wody, 28 g soli; 100% mąki w bigze o hydratacji 45%; 7 g drożdży w bigze |
 | Bez zaczynu — Gozney | 600 g wody, 30 g soli, 2 g drożdży |
 
-Baza poolishu wybiera wariant chłodzony i chłodzenie finalnego ciasta w masie. Temperatura finalnego TO i budżet mieszania to założenia aplikacji. Biga pomija opcjonalny słód i olej. Czasy z przedziałów źródłowych wybieramy do konkretnego harmonogramu; ich środek nie jest gwarantowaną chwilą gotowości.
+Baza poolishu wybiera 12 h w TO (z zakresu 10–16 h w opisie), 1,5 h przed kulkowaniem i 9 h wyrastania kulek przy 22°C. Opcja lodówki dotyczy kulek po ich wstępnym wyrastaniu, a nie obowiązkowego chłodzenia poolish. Temperatura poolish 22°C i budżet mieszania to założenia aplikacji. 0,5% świeżych drożdży względem mąki poolish może spowodować wcześniejsze dojrzewanie — kontroluj zaczyn. Biga pomija opcjonalny słód i olej. Czasy z przedziałów źródłowych wybieramy do konkretnego harmonogramu; ich środek nie jest gwarantowaną chwilą gotowości.
 
 Dawka drożdży jest skalowana z wybranej bazy albo wpisywana ręcznie. Własne dawki podaje się w ekwiwalencie świeżych: g/kg mąki zaczynu oraz dodatkowo g/kg całej mąki. Korekta procentowa dotyczy obu dawek. Brak drożdży w zaczynie blokuje przepis; zakwas nie jest obsługiwany.
 
@@ -22,7 +22,7 @@ Dla instant baza Gozney stosuje podaną przez autora proporcję 1:2 do świeżyc
 
 **Zmiana czasu, temperatury, soli czy udziału zaczynu nie przelicza automatycznie drożdży.** Usunięto z aktywnego modelu niezweryfikowane mnożniki aktywności zaczynu i stały czas chłodzenia. Wpływ tych warunków wymaga dopracowania receptury w rzeczywistych wypiekach; dodanie kolejnej arbitralnej korekty nie zastępowałoby kalibracji.
 
-Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsumowanie podaje także procent mąki. Bilans uwzględnia obie dawki drożdży. Zmiana ich typu może minimalnie zmienić procent soli przy stałym g/kg ciasta. Udział poolishu ogranicza dostępna woda, zamiast dawnego arbitralnego pułapu 50%.
+Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsumowanie podaje także procent mąki. Dla bazowego poolish 3% mąki odpowiada około 18,06 g/kg gotowego ciasta. Bilans uwzględnia obie dawki drożdży. Zmiana ich typu może minimalnie zmienić procent soli przy stałym g/kg ciasta. Udział poolishu ogranicza dostępna woda, zamiast dawnego arbitralnego pułapu 50%.
 
 ## Temperatura, mąka i obsługiwany zakres
 
@@ -40,7 +40,7 @@ Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsu
 
 Jeden ekran, bez zakładek, dziennika wypieków, zdjęć, oceny dojrzałości i prowadzenia sesji. Podstawowe pola: metoda, liczba pizz, masa kulki, hydratacja, sól w g/kg ciasta, temperatura pokoju, typ drożdży, włączenie lodówki i opcjonalny termin pieczenia.
 
-**Ustawienia zaawansowane** są domyślnie zwinięte: parametry zaczynu, czasy etapów, chłodzenie masy lub kulek, własne dawki drożdży, mąka i W, temperatura ciasta, pomoc DDT oraz odstępy kontroli. Zmiana metody wczytuje jej bazę, zachowując liczbę pizz, masę kulki i termin. Wyłączenie lodówki usuwa oba etapy TK; poolish przechodzi na 15 h w TO. To własna adaptacja, nie nowa skalibrowana receptura. Zmiana hydratacji poniżej udziału mąki w poolishu ogranicza udział zaczynu, aby zachować dodatni bilans wody.
+**Ustawienia zaawansowane** są domyślnie zwinięte: parametry zaczynu, czasy etapów, chłodzenie masy lub kulek, własne dawki drożdży, mąka i W, temperatura ciasta, pomoc DDT oraz odstępy kontroli. Zmiana metody wczytuje jej bazę, zachowując liczbę pizz, masę kulki i termin. Wyłączenie lodówki usuwa etapy TK; bazowy poolish fermentuje 12 h w TO. To własna adaptacja, nie nowa skalibrowana receptura. Zmiana hydratacji poniżej udziału mąki w poolishu ogranicza udział zaczynu, aby zachować dodatni bilans wody.
 
 Wynik pokazuje składniki zaczynu, składniki dodawane do niego i moment rozpoczęcia. Harmonogram, oś czasu i uwagi rozwija się pod wynikiem. Błędy blokują wynik; błąd ukrytego parametru otwiera ustawienia zaawansowane. Termin pieczenia automatycznie wyznacza start wstecz według czasów receptury, bez zmiany dawek. Pusty termin pokazuje czasy względne. Start w przeszłości jest jawnie oznaczony.
 
@@ -56,7 +56,7 @@ Dziennik, prowadzenie sesji i lista zapisanych przepisów zostały usunięte z i
 
 Sprawdzone 23.10.2026. Przepisy dostarczają konkretnych punktów odniesienia; materiały zawodowe wspierają metodę pracy, a nie uniwersalny wzór na godzinę dojrzałości.
 
-- [Städler Made — Poolish](https://www.stadlermade.com/pizza/ingredients/poolish/)
+- Poolish 30% — proporcje i harmonogram z opisu w przesłanych zrzutach (bez zweryfikowanego URL źródła)
 - [Städler Made — Biga](https://www.stadlermade.com/pizza/ingredients/biga/)
 - [Gozney — Pizza for Beginners](https://eu.gozney.com/blogs/recipes/pizza-for-beginners-simple-pizza-dough-recipe)
 - [AVPN — Associazione Verace Pizza Napoletana](https://www.pizzanapoletana.org/): standard ciasta bezpośredniego i pieczenia; punkt odniesienia, nie wymóg aplikacji.

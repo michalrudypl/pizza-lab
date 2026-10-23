@@ -2,18 +2,18 @@
 // Source-inspired starting points and conservative app limits; not a validated
 // biological fermentation model. Keep assumptions visible in README and the UI.
 const PizzaRules = (() => {
-  const defaults={method:'poolish',preferMode:'room',balls:4,weight:250,hyd:65,saltkg:18,share:30,ph:12,pcold:0,preferTemp:21,bigaHyd:45,temp:21,yeast:'fresh',adjust:100,startcm:5,bulk:1,cold:0,fridge:4,proof:4,yeastMode:'reference',preferDose:1.43,finalDose:1,mixHours:.5,coldPosition:'balls',doughTemp:'',flourW:'',checkBefore:1,checkAfter:1};
+  const defaults={method:'poolish',preferMode:'room',balls:4,weight:250,hyd:63,saltkg:30000/1661.5,share:30,ph:12,pcold:0,preferTemp:22,bigaHyd:45,temp:22,yeast:'fresh',adjust:100,startcm:5,bulk:1.5,cold:0,fridge:4,proof:9,preColdProof:0,yeastMode:'reference',preferDose:5,finalDose:0,mixHours:.5,coldPosition:'balls',doughTemp:'',flourW:'',checkBefore:1,checkAfter:1};
   const labels={poolish:'Poolish',biga:'Biga',direct:'Bez zaczynu'};
-  const fields={preferDose:[0,30,0,'Drożdże w zaczynie'],finalDose:[0,30,0,'Drożdże w końcowym cieście'],mixHours:[.25,2,.25,'Przygotowanie ciasta'],checkBefore:[.25,3,.25,'Kontrola przed planem'],checkAfter:[.25,3,.25,'Kontrola po planie'],balls:[1,12,1,'Liczba kulek'],weight:[150,500,5,'Waga kulki'],hyd:[55,80,1,'Hydratacja'],saltkg:[10,24,0,'Sól (g/kg ciasta)'],temp:[16,28,1,'Temperatura pomieszczenia TO'],adjust:[50,150,5,'Korekta drożdży'],bulk:[0,24,.25,'Ciasto przed kulkowaniem'],cold:[0,48,.5,'Kulki w lodówce'],proof:[.5,24,.25,'Kulki w TO'],share:[10,100,1,'Udział mąki w zaczynie'],ph:[.5,24,.5,'Zaczyn w TO'],pcold:[12,24,.5,'Poolish w TK'],preferTemp:[16,28,1,'Temperatura zaczynu w TO'],bigaHyd:[45,50,1,'Hydratacja bigi'],fridge:[3,5,.5,'Temperatura lodówki'],startcm:[2,10,.5,'Poziom w słoiku']};
+  const fields={preColdProof:[0,6,.25,'Kulki przed lodówką'],preferDose:[0,30,0,'Drożdże w zaczynie'],finalDose:[0,30,0,'Drożdże w końcowym cieście'],mixHours:[.25,2,.25,'Przygotowanie ciasta'],checkBefore:[.25,3,.25,'Kontrola przed planem'],checkAfter:[.25,3,.25,'Kontrola po planie'],balls:[1,12,1,'Liczba kulek'],weight:[150,500,5,'Waga kulki'],hyd:[55,80,1,'Hydratacja'],saltkg:[10,24,0,'Sól (g/kg ciasta)'],temp:[16,28,1,'Temperatura pomieszczenia TO'],adjust:[50,150,5,'Korekta drożdży'],bulk:[0,24,.25,'Ciasto przed kulkowaniem'],cold:[0,48,.5,'Kulki w lodówce'],proof:[.5,24,.25,'Kulki w TO'],share:[10,100,1,'Udział mąki w zaczynie'],ph:[.5,24,.5,'Zaczyn w TO'],pcold:[12,24,.5,'Poolish w TK'],preferTemp:[16,28,1,'Temperatura zaczynu w TO'],bigaHyd:[45,50,1,'Hydratacja bigi'],fridge:[3,5,.5,'Temperatura lodówki'],startcm:[2,10,.5,'Poziom w słoiku']};
   // These are application scope bounds, not biological expiry thresholds.
   const poolishMax=()=>24;
   const finalMax=()=>48;
   const normalize=s=>({...defaults,...s,preferTemp:s?.preferTemp??s?.temp??defaults.preferTemp});
   const bad=(field,text)=>({field,text});
   const references={
-    poolish:{name:'Poolish — baza Städler Made',url:'https://www.stadlermade.com/pizza/ingredients/poolish/',preferDose:1000/700,finalDose:1,instantRatio:1/3,
-      settings:{method:'poolish',preferMode:'cold',hyd:70,share:70,ph:1,pcold:24,fridge:4,preferTemp:20,temp:21,bulk:.25,cold:4.5,coldPosition:'bulk',proof:2.5,mixHours:.5,saltkg:25000/1727},
-      note:'Proporcje ze źródła; czasy wybrane z jego przedziałów. TO końcowego ciasta 21°C i 30 min przygotowania to założenia planu. Instant: przybliżony przelicznik, sprawdź producenta.'},
+    poolish:{name:'Poolish 30% — przepis z przesłanych zrzutów',url:'',preferDose:5,finalDose:0,instantRatio:1/3,
+      settings:{method:'poolish',preferMode:'room',hyd:63,share:30,ph:12,pcold:0,fridge:4,preferTemp:22,temp:22,bulk:1.5,cold:0,coldPosition:'balls',proof:9,preColdProof:0,mixHours:.5,saltkg:30000/1661.5,flourW:320},
+      note:'Przepis ze zrzutów: na 1000 g mąki W320 użyj 630 g wody, 30 g soli i 1,5 g świeżych drożdży wyłącznie do poolish (300 g mąki + 300 g wody). Poolish 10–16 h w TO; kulkowanie po 1–2 h; kulki 8–10 h przy 22°C. Baza wybiera środki zakresów. UWAGA: dojrzałość trzeba kontrolować, szczególnie przy cieplejszym poolish. Instant 1:3 i 30 min mieszania to założenia kalkulatora.'},
     biga:{name:'Biga 100% — baza Städler Made',url:'https://www.stadlermade.com/pizza/ingredients/biga/',preferDose:7,finalDose:0,instantRatio:1/3,
       settings:{method:'biga',preferMode:'room',hyd:70,share:100,bigaHyd:45,ph:18,pcold:0,preferTemp:18,temp:24,bulk:1.5,cold:0,coldPosition:'balls',proof:3,mixHours:1,saltkg:28000/1735},
       note:'Wariant bez opcjonalnego słodu i oleju. Plan wybiera środek zakresów końcowej fermentacji; 1 h przygotowania jest budżetem czasu. Instant: przybliżenie, źródło nie precyzuje typu suchych drożdży.'},
@@ -74,11 +74,13 @@ const PizzaRules = (() => {
     if(coldPrefer)keys.push('pcold');
     if(Number(s.cold)>0||coldPrefer)keys.push('fridge');
     if(s.method==='poolish')keys.push('startcm');
+    if(s.method==='poolish'&&Number(s.cold)>0&&s.coldPosition==='balls')keys.push('preColdProof');
     for(const k of keys){const [min,max,step,label]=fields[k],raw=s[k];const n=(typeof raw==='number'||typeof raw==='string'&&raw.trim()!=='')?Number(raw):NaN;v[k]=n;
       if(!Number.isFinite(n)||n<min||(k!=='ph'&&n>max)||step>0&&Math.abs((n-min)/step-Math.round((n-min)/step))>1e-7)errors.push(bad(k,`${label}: wpisz ${min}–${max}${step?' (krok '+String(step).replace('.',',')+')':''}.`));}
     if(errors.length)return {errors,warnings};
     if(!prefer){v.share=0;v.ph=0;v.pcold=0;}
     if(!coldPrefer)v.pcold=0;
+    if(!(s.method==='poolish'&&Number(s.cold)>0&&s.coldPosition==='balls'))v.preColdProof=0;
     if(!(v.cold>0||coldPrefer))v.fridge=4;
     if(s.method==='poolish'){
       if(v.share>v.hyd)errors.push(bad('share','Poolish wnosi więcej wody niż całe ciasto. Zmniejsz udział zaczynu lub zwiększ hydratację.'));
@@ -92,7 +94,7 @@ const PizzaRules = (() => {
       if(v.share<20)errors.push(bad('share','Biga: użyj 20–100% całej mąki.'));
       if(v.preferTemp>18)warnings.push('Biga powyżej 18°C dojrzewa szybciej. Pilnuj temperatury samego zaczynu i jego struktury.');
     }
-    const roomHours=v.mixHours+v.bulk+v.proof;
+    const roomHours=v.mixHours+v.bulk+v.proof+v.preColdProof;
     if(roomHours>finalMax())errors.push(bad('proof','Plan obejmuje ponad 48 h w TO — poza zakresem tej aplikacji. To nie granica biologiczna.'));
     if(errors.length)return {errors,warnings};
     const reference=referenceStatus(v),ref=references[v.method],correction=v.adjust/100;
@@ -116,6 +118,7 @@ const PizzaRules = (() => {
     if(s.method==='biga')warnings.push('Do bigi wybierz mocną mąkę przeznaczoną do dłuższej fermentacji. Wymieszaj krótko w grudki, bez wyrabiania gładkiego ciasta.');
     if(s.method==='poolish'&&!coldPrefer&&(v.ph>poolishMax(v.preferTemp)-2||v.preferTemp>=25))warnings.push('Zacznij sprawdzać poolish wcześniej; nie czekaj na zegar, jeżeli wierzch już opada.');
     if(s.method==='poolish'&&!coldPrefer&&v.ph<8)warnings.push('Krótki poolish daje mniej czasu na rozwój aromatu. Potwierdź dojrzałość po napowietrzeniu.');
+    if(s.method==='poolish'&&!coldPrefer&&v.preferTemp>=22&&v.ph>=12)warnings.push('Poolish z 0,5% świeżych drożdży względem mąki zaczynu może dojrzewać szybciej niż założony czas. Sprawdzaj bąbelki, aromat i spłaszczanie powierzchni, nie tylko zegar.');
     if(prefer&&v.share>40)warnings.push('Duży udział dojrzałego zaczynu: obserwuj ciasto wcześniej, szczególnie podczas wyrastania w TO.');
     if(v.cold>24)warnings.push('Długi TK: dobierz mąkę do takiej fermentacji i zmierz temperaturę lodówki. Czas chłodzenia zależy od kulek i pojemnika.');
     if(reference.adapted)warnings.push('Adaptacja receptury: zmienione warunki nie mają potwierdzonego czasu dojrzewania. Dawka ze źródła skaluje się z mąką, nie przelicza automatycznie na nowy harmonogram.');
@@ -138,10 +141,11 @@ const PizzaRules = (() => {
       add('prefer',`Przygotuj ${v.method==='biga'?'bigę':'poolish'}`,v.ph,v.method==='biga'?`Połącz mąkę, wodę i drożdże w luźne grudki. Nie wyrabiaj. Przykryj i utrzymuj ${v.preferTemp}°C. Dojrzała biga jest napowietrzona i włóknista wewnątrz.`:`Wymieszaj równe masy mąki i wody z drożdżami, bez soli. Przykryj z zapasem miejsca. Trzymaj w ${v.preferTemp}°C; ${v.preferMode==='cold'?'po tym etapie przenieś do lodówki.':'oceniaj napowietrzenie i początek spłaszczania wierzchu.'}`);
       if(v.method==='poolish'&&v.preferMode==='cold')add('preferCold','Poolish w lodówce',v.pcold,`Wstaw przykryty poolish do ${v.fridge}°C. Chłodzenie nie zatrzymuje fermentacji natychmiast. Przed użyciem oceń napowietrzenie i strukturę.`);
     }
-    add('mix',v.method==='direct'?'Przygotuj ciasto bez zaczynu':'Przygotuj ciasto z dojrzałym zaczynem',v.mixHours,v.method==='biga'?'Rozdrobnij dojrzałą bigę w części pozostałej wody. Stopniowo dodawaj resztę składników i wodę; sól dodaj do końcowego ciasta. Wyrób do spójności.':v.method==='poolish'?'Połącz dojrzały poolish z pozostałą mąką, wodą, solą i dodatkową dawką drożdży podaną w przepisie. Wyrób do spójności.':'Połącz wodę, drożdże, mąkę i sól. Wyrób do spójnego, elastycznego ciasta. Nie dodawaj zaczynu.');
+    add('mix',v.method==='direct'?'Przygotuj ciasto bez zaczynu':'Przygotuj ciasto z dojrzałym zaczynem',v.mixHours,v.method==='biga'?'Rozdrobnij dojrzałą bigę w części pozostałej wody. Stopniowo dodawaj resztę składników i wodę; sól dodaj do końcowego ciasta. Wyrób do spójności.':v.method==='poolish'?('Połącz dojrzały poolish z pozostałą mąką, wodą i solą'+(r.finalYeast>0?' oraz dodatkową porcją drożdży':'')+'. Wyrób do spójności.'):'Połącz wodę, drożdże, mąkę i sól. Wyrób do spójnego, elastycznego ciasta. Nie dodawaj zaczynu.');
     if(v.bulk)add('bulk','Ciasto przed kulkowaniem w TO',v.bulk,`Przykryj i zostaw w ${v.temp}°C. Oceniaj napowietrzenie; nie wymagaj sztywno podwojenia objętości.`);
     if(v.cold&&v.coldPosition==='bulk')add('cold','Ciasto w masie w lodówce',v.cold,`Przechowuj przykryte ciasto w ${v.fridge}°C. Środek dużej masy chłodzi się wolniej niż kulki; zmierz temperaturę.`);
     add('shape','Podziel i uformuj kulki',0,`Podziel na ${v.balls} porcji po ${v.weight} g. Uformuj napięty wierzch i zamknij łączenie od spodu. Włóż do przykrytych pojemników.`);
+    if(v.method==='poolish'&&v.cold&&v.coldPosition==='balls'&&v.preColdProof)add('preColdProof','Kulki w TO przed lodówką',v.preColdProof,`Pozostaw uformowane kulki pod przykryciem w ${v.temp}°C, następnie wstaw do lodówki. Ten etap to opcjonalny wariant z opisu przepisu.`);
     if(v.cold&&v.coldPosition==='balls')add('cold','Kulki w lodówce',v.cold,`Przechowuj przykryte kulki w zmierzonych ${v.fridge}°C. Zostaw miejsce na wzrost.`);
     add('proof','Kulki w TO przed pieczeniem',v.proof,`Zostaw w ${v.temp}°C pod przykryciem. Gotowa kulka jest napowietrzona, miękka i rozciągliwa. Po delikatnym naciśnięciu palcem wgłębienie powoli się wyrównuje, zostawiając niewielki ślad. Gdy mocno się kurczy, daj jej więcej czasu. Nagrzej piec zgodnie z jego instrukcją.`);
     add('bake','Pieczenie',0,'Rozciągaj od środka, zachowując gaz w rancie. Nałóż dodatki i wypiekaj, obserwując spód i rant. Czas zależy od pieca i temperatury płyty. Punkt odniesienia z regulaminu AVPN: powierzchnia wypieku ok. 380–430°C i 60–90 s pieczenia; mierz temperaturę kamienia, nie samej komory.');return st;
