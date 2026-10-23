@@ -33,21 +33,21 @@ Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsu
 - Hydratacja 55–80%; sól 10–24 g/kg ciasta, blokada ponad 3,5% mąki, ostrzeżenie poza 2–3,2%. Te granice nie są uniwersalne dla wszystkich stylów pizzy.
 - Po TK nie narzucamy uniwersalnego minimum 2 h: krótszy czas wymaga oceny temperatury środka i rozciągliwości.
 
-## Planowanie i kontrole
+## Prosty kalkulator
 
-„Wyznacz start” układa wybraną recepturę wstecz od pieczenia. Nie skraca fermentacji ani nie dodaje chłodzenia tylko po to, aby wypełnić czas. Gdy dostępne okno jest za krótkie, wskazuje potrzebny czas.
+Jeden ekran, bez zakładek, dziennika wypieków, zdjęć, oceny dojrzałości i prowadzenia sesji. Podstawowe pola: metoda, liczba pizz, masa kulki, hydratacja, sól w g/kg ciasta, temperatura pokoju, typ drożdży, włączenie lodówki i opcjonalny termin pieczenia.
 
-Chłodzenie finalnego ciasta można ustawić przed kulkowaniem lub po nim — zmienia się kolejność etapów. Czas przygotowania obejmuje mieszanie i odpoczynki, nie ciągłe wyrabianie.
+**Ustawienia zaawansowane** są domyślnie zwinięte: parametry zaczynu, czasy etapów, chłodzenie masy lub kulek, własne dawki drożdży, mąka i W, temperatura ciasta, pomoc DDT oraz odstępy kontroli. Zmiana metody wczytuje jej bazę, zachowując liczbę pizz, masę kulki i termin. Wyłączenie lodówki usuwa oba etapy TK; poolish przechodzi na 15 h w TO. To własna adaptacja, nie nowa skalibrowana receptura. Zmiana hydratacji poniżej udziału mąki w poolishu ogranicza udział zaczynu, aby zachować dodatni bilans wody.
 
-„Kontrole gotowości” zachowują oś czasu, znacznik „teraz”, suwak ±3 h oraz przyciski ±1 h. Przedział ustawiany jest przez użytkownika (domyślnie godzinę przed i po planie), kreskowany i opisany jako **terminy oglądania ciasta**, nie przewidywana tolerancja fermentacji. Nie ma zielonego potwierdzenia gotowości. Suwak nie zmienia receptury.
+Wynik pokazuje składniki zaczynu, składniki dodawane do niego i moment rozpoczęcia. Harmonogram, oś czasu i uwagi rozwija się pod wynikiem. Błędy blokują wynik; błąd ukrytego parametru otwiera ustawienia zaawansowane. Termin pieczenia automatycznie wyznacza start wstecz według czasów receptury, bez zmiany dawek. Pusty termin pokazuje czasy względne. Start w przeszłości jest jawnie oznaczony.
 
-„Robię teraz” zachowuje kopię receptury i kroki z chwili startu. Kontrole liczone są od faktycznego startu etapu. Przedłużenie timera nie przesuwa początku etapu ani kontroli. Etapy przechodzi się ręcznie. Nie ma powiadomień w tle.
+Oś zachowuje suwak ±3 h, przyciski ±1 h i znacznik „teraz”. Kreskowany zakres oznacza ustawione przez użytkownika kontrole (domyślnie godzinę przed i po planie), nie przewidywaną tolerancję fermentacji. Suwak nie zmienia receptury. Kopiowanie obejmuje składniki, harmonogram, źródło i uwagi.
 
-## Zapis i aktualizacja
+## Ustawienia lokalne
 
-Zapisane wcześniej receptury zachowują dawki przez jednorazowe przeliczenie starego modelu na własne dawki. `migrateSettings` zawiera dawną heurystykę **wyłącznie dla zgodności danych**; nie stosuje jej do nowych receptur. UI informuje o migracji i pozwala przejść na bazę źródłową. Stara rozpoczęta sesja zachowuje własny przepis i etapy.
+`pizzaSettings` zachowuje ostatnie ustawienia. Stare receptury są migrowane do własnych dawek z zachowaniem gramatur; `migrateSettings` odtwarza dawną heurystykę wyłącznie dla zgodności danych.
 
-Przepisy (`pizzaRecipes`), ustawienia (`pizzaSettings`), sesja (`pizzaSessionV1`) i dziennik (`pizzaJournalV1`) pozostają lokalne. Dziennik: do 20 wpisów, zdjęcia zmniejszone do 640 px, eksport JSON. Brak synchronizacji i importu. Wyczyszczenie danych przeglądarki może usunąć zapisy.
+Dziennik, prowadzenie sesji i lista zapisanych przepisów zostały usunięte z interfejsu oraz aktywnego kodu. Wcześniejszych lokalnych wpisów (`pizzaJournalV1`, `pizzaSessionV1`, `pizzaRecipes`) aplikacja nie odczytuje ani nie kasuje. Brak konta, synchronizacji i powiadomień w tle.
 
 ## Źródła
 
@@ -66,6 +66,6 @@ Sprawdzone 23.10.2026. Przepisy dostarczają konkretnych punktów odniesienia; m
 node --test calculator.test.js
 ```
 
-Testy sprawdzają proporcje baz, bilans masy, dawki, oznaczanie adaptacji, granice danych, kolejność chłodzenia, DDT, planer, kontrole i migrację. Nie są walidacją biologiczną. Scenariusze DOM sprawdzono osobno przez Happy DOM; brak zależności produkcyjnych.
+Testy sprawdzają proporcje baz, bilans masy, dawki, oznaczanie adaptacji, granice danych, kolejność chłodzenia, DDT, planer, kontrole i migrację. Nie są walidacją biologiczną. Scenariusze DOM sprawdzono osobno przez Happy DOM: pojedynczy ekran, zwijanie ustawień, metody, przełącznik TK, daty, błędy, oś czasu, migracja i zachowanie wcześniejszych lokalnych danych. Brak zależności produkcyjnych.
 
-GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v6, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.
+GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v7, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.
