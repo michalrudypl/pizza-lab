@@ -32,6 +32,9 @@ Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsu
 - Twarde granice to **zakres obsługi aplikacji**, nie rekomendacja ani biologiczny termin przydatności: poolish TO 4–24 h; chłodzony poolish 0,5–2 h TO + 12–24 h TK; biga 12–24 h w 16–20°C; końcowe TO do 48 h i TK do 48 h. Temperatura TO 16–28°C, TK 3–5°C. Każde odejście od bazy pozostaje adaptacją.
 - Hydratacja 55–80%; sól 10–24 g/kg ciasta, blokada ponad 3,5% mąki, ostrzeżenie poza 2–3,2%. Te granice nie są uniwersalne dla wszystkich stylów pizzy.
 - Po TK nie narzucamy uniwersalnego minimum 2 h: krótszy czas wymaga oceny temperatury środka i rozciągliwości.
+- Sól jest podawana w dwóch jednostkach, których nie wolno mylić: g/kg gotowego ciasta (pole wejściowe, np. 16–18) oraz % mąki (podsumowanie przepisu, np. 2,5–3%). To nie są te same liczby.
+- Etap pieczenia przypomina punkt odniesienia AVPN dla powierzchni wypieku (ok. 380–430°C, 60–90 s). To wskazówka do pomiaru temperatury kamienia, nie ograniczenie aplikacji. Gotowość kulek oceniamy m.in. próbą palca: wgłębienie powoli się wyrównuje i zostawia niewielki ślad.
+- Wzrost poolishu do określonej objętości (np. 160%) nie jest uniwersalnym wskaźnikiem dojrzałości; aplikacja nie ocenia gotowości z samej objętości.
 
 ## Prosty kalkulator
 
@@ -56,6 +59,8 @@ Sprawdzone 23.10.2026. Przepisy dostarczają konkretnych punktów odniesienia; m
 - [Städler Made — Poolish](https://www.stadlermade.com/pizza/ingredients/poolish/)
 - [Städler Made — Biga](https://www.stadlermade.com/pizza/ingredients/biga/)
 - [Gozney — Pizza for Beginners](https://eu.gozney.com/blogs/recipes/pizza-for-beginners-simple-pizza-dough-recipe)
+- [AVPN — Associazione Verace Pizza Napoletana](https://www.pizzanapoletana.org/): standard ciasta bezpośredniego i pieczenia; punkt odniesienia, nie wymóg aplikacji.
+- Jeffrey Hamelman, *Bread: A Baker's Book of Techniques and Recipes*: orientacyjne dawki drożdży w poolishu zależne od czasu; nie są modelem fermentacji pizzy i nie zastępują kalibracji wypiekami.
 - [King Arthur Baking — Preferment](https://www.kingarthurbaking.com/pro/reference/preferment): zależność dawki od warunków, oznaki dojrzałości.
 - [King Arthur Baking — Desired Dough Temperature](https://www.kingarthurbaking.com/blog/2018/05/29/desired-dough-temperature): orientacyjna metoda DDT.
 - [King Arthur Baking — Salt](https://www.kingarthurbaking.com/pro/reference/salt): wpływ soli na fermentację i strukturę, bez narzucania chlebowych proporcji każdej pizzy.
@@ -68,4 +73,4 @@ node --test calculator.test.js
 
 Testy sprawdzają proporcje baz, bilans masy, dawki, oznaczanie adaptacji, granice danych, kolejność chłodzenia, DDT, planer, kontrole i migrację. Nie są walidacją biologiczną. Scenariusze DOM sprawdzono osobno przez Happy DOM: pojedynczy ekran, zwijanie ustawień, metody, przełącznik TK, daty, błędy, oś czasu, migracja i zachowanie wcześniejszych lokalnych danych. Brak zależności produkcyjnych.
 
-GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v7, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.
+GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v8, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.

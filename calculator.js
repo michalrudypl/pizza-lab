@@ -143,8 +143,8 @@ const PizzaRules = (() => {
     if(v.cold&&v.coldPosition==='bulk')add('cold','Ciasto w masie w lodówce',v.cold,`Przechowuj przykryte ciasto w ${v.fridge}°C. Środek dużej masy chłodzi się wolniej niż kulki; zmierz temperaturę.`);
     add('shape','Podziel i uformuj kulki',0,`Podziel na ${v.balls} porcji po ${v.weight} g. Uformuj napięty wierzch i zamknij łączenie od spodu. Włóż do przykrytych pojemników.`);
     if(v.cold&&v.coldPosition==='balls')add('cold','Kulki w lodówce',v.cold,`Przechowuj przykryte kulki w zmierzonych ${v.fridge}°C. Zostaw miejsce na wzrost.`);
-    add('proof','Kulki w TO przed pieczeniem',v.proof,`Zostaw w ${v.temp}°C pod przykryciem. Gotowa kulka jest napowietrzona, rozluźniona i rozciąga się bez silnego cofania. Gdy mocno się kurczy, daj jej więcej czasu. Nagrzej piec zgodnie z jego instrukcją.`);
-    add('bake','Pieczenie',0,'Rozciągaj od środka, zachowując gaz w rancie. Nałóż dodatki i wypiekaj, obserwując spód i rant. Czas zależy od pieca i temperatury płyty.');return st;
+    add('proof','Kulki w TO przed pieczeniem',v.proof,`Zostaw w ${v.temp}°C pod przykryciem. Gotowa kulka jest napowietrzona, miękka i rozciągliwa. Po delikatnym naciśnięciu palcem wgłębienie powoli się wyrównuje, zostawiając niewielki ślad. Gdy mocno się kurczy, daj jej więcej czasu. Nagrzej piec zgodnie z jego instrukcją.`);
+    add('bake','Pieczenie',0,'Rozciągaj od środka, zachowując gaz w rancie. Nałóż dodatki i wypiekaj, obserwując spód i rant. Czas zależy od pieca i temperatury płyty. Punkt odniesienia z regulaminu AVPN: powierzchnia wypieku ok. 380–430°C i 60–90 s pieczenia; mierz temperaturę kamienia, nie samej komory.');return st;
   }
   function plan(input,earliest,bake){
     const settings=normalize(input),start=new Date(earliest).getTime(),end=new Date(bake).getTime();

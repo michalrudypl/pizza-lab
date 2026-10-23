@@ -39,7 +39,7 @@ function render(){
  el('doseNote').textContent=r.reference.adapted?'Własna adaptacja. Dawki ze źródła nie dopasowują się automatycznie do nowego czasu.':'Dawki z receptury źródłowej. Gotowość sprawdź przed użyciem.';
  el('preferRecipe').hidden=!prefer;el('preferTitle').textContent=v.method==='biga'?'1. Biga':'1. Poolish';el('finalTitle').textContent=prefer?'2. Dodaj do dojrzałego zaczynu':'Połącz składniki';
  if(prefer)writeRows('preferIngredients',[['Mąka',g(r.pf)],['Woda',g(r.pw)],['Drożdże '+(v.yeast==='fresh'?'świeże':'instant'),yg(r.preferYeast)]]);
- writeRows('finalIngredients',[...(prefer?[['Cały dojrzały zaczyn',g(r.pf+r.pw+r.preferYeast)]]:[]),['Mąka',g(r.ff)],['Woda',g(r.fw)],['Sól',g(r.salt)],['Drożdże '+(prefer?'dodatkowo':'do ciasta'),yg(r.finalYeast)]]);
+ writeRows('finalIngredients',[...(prefer?[['Cały dojrzały zaczyn',g(r.pf+r.pw+r.preferYeast)]]:[]),['Mąka',g(r.ff)],['Woda',g(r.fw)],[`Sól (${fmt(r.saltPct,2)}% mąki)`,g(r.salt)],['Drożdże '+(prefer?'dodatkowo':'do ciasta'),yg(r.finalYeast)]]);
  const stages=PizzaRules.timeline(r,v.bake),start=el('startInfo');start.replaceChildren();
  const label=document.createElement('span'),value=document.createElement('strong');
  label.textContent=stages.length?'Zacznij przygotowanie':'Czas przygotowania';value.textContent=stages.length?when(stages[0].startsAt):fmt(r.hours,2)+' h';start.append(label,value);

@@ -50,6 +50,13 @@ test('cold placement changes actual step order, not only the label',()=>{
  const balls=valid({...base('poolish'),coldPosition:'balls'}).steps.map(s=>s.kind);assert.ok(balls.indexOf('cold')>balls.indexOf('shape'));
  const r=valid(base('poolish'));near(r.hours,32.75);near(r.steps.find(s=>s.kind==='preferCold').hours,24);near(r.steps.find(s=>s.kind==='cold').hours,4.5);
 });
+test('proof and bake steps carry the poke test and the AVPN stone-temperature reference',()=>{
+ for(const method of ['poolish','biga','direct']){
+  const steps=valid(base(method)).steps;
+  assert.ok(steps.find(s=>s.kind==='proof').instruction.includes('wgłębienie'));
+  const bake=steps.find(s=>s.kind==='bake').instruction;assert.ok(bake.includes('380–430°C')&&bake.includes('60–90 s'));
+ }
+});
 test('planner preserves doses, phases and extra spare time instead of filling it',()=>{
  const start=Date.parse('2026-10-23T10:00:00+02:00');
  for(const method of ['poolish','biga','direct'])for(const hours of [2,8,12,24,36,100]){
