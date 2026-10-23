@@ -73,4 +73,4 @@ node --test calculator.test.js
 
 Testy sprawdzają proporcje baz, bilans masy, dawki, oznaczanie adaptacji, granice danych, kolejność chłodzenia, DDT, planer, kontrole i migrację. Nie są walidacją biologiczną. Scenariusze DOM sprawdzono osobno przez Happy DOM: pojedynczy ekran, zwijanie ustawień, metody, przełącznik TK, daty, błędy, oś czasu, migracja i zachowanie wcześniejszych lokalnych danych. Brak zależności produkcyjnych.
 
-GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v8, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.
+GitHub Pages: `master`, katalog główny. [Otwórz Pizza Lab](https://michalrudypl.github.io/pizza-lab/). PWA cache v9, offline po pierwszym załadowaniu. iPhone: Safari → Udostępnij → Dodaj do ekranu początkowego.
