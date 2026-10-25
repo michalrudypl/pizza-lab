@@ -24,6 +24,9 @@ input[type=datetime-local]{text-align:left;overflow:hidden}input::-webkit-date-a
 input[type=checkbox]{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--accent);-webkit-appearance:checkbox;appearance:checkbox}
 button{padding:11px 12px;background:var(--accent);color:white;font-weight:650;border:0;border-radius:10px;cursor:pointer}
 button.secondary{background:var(--soft);color:var(--ink)}button:disabled{opacity:.5}
+button.preset{background:var(--soft);color:var(--ink);border:2px solid transparent;padding:9px 10px;min-height:50px}
+button.preset[aria-pressed="true"]{background:var(--accent);color:white;border-color:var(--accent)}
+.preset-status{color:var(--ink);background:var(--soft);font-size:13px;padding:11px 12px;border-radius:10px;margin:8px 0 0}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .actions{display:flex;gap:8px;margin:12px 0 16px}.actions button{flex:1}
 details{border-top:1px solid var(--line);margin-top:18px;padding-top:15px}summary{font-size:14px;font-weight:650;cursor:pointer}details>div{margin-top:16px}
@@ -45,14 +48,14 @@ ol,ul{padding-left:20px}li{margin:12px 0}li small{display:block;margin-top:4px}
 <div class="grid">
 <div class="field"><label for="count">Liczba bagietek</label><input id="count" data-setting type="number" min="1" max="20" step="1" value="2"></div>
 <div class="field"><label for="weight">Waga sztuki (g, przed pieczeniem)</label><input id="weight" data-setting type="number" min="100" max="650" step="5" value="200"></div>
-<div class="field"><label for="hydration">Hydratacja (%)</label><input id="hydration" data-setting type="number" min="55" max="90" step="0.1" value="76.84"></div>
+<div class="field"><label for="hydration">Hydratacja (%)</label><input id="hydration" data-setting type="number" min="55" max="90" step="0.01" value="76.84"></div>
 <div class="field"><label for="bulkHours">Fermentacja (h)</label><input id="bulkHours" data-setting type="number" min="4" max="16" step="0.5" value="9"></div>
 </div>
 <div class="field" style="margin-top:14px"><label for="bakeAt">Kiedy wstawiasz do piekarnika? (opcjonalnie)</label><input id="bakeAt" data-setting type="datetime-local"></div>
 <details id="advanced"><summary>Ustawienia zaawansowane</summary><div>
 <div class="grid">
-<div class="field"><label for="saltPerKg">Sól (g/kg ciasta)</label><input id="saltPerKg" data-setting type="number" min="0" max="25" step="any" value="9.423"></div>
-<div class="field"><label for="yeastDryPerKgFlour">Drożdże suszone (g/kg mąki)</label><input id="yeastDryPerKgFlour" data-setting type="number" min="0.05" max="12" step="any" value="2.105263"></div>
+<div class="field"><label for="saltPerKg">Sól (g/kg ciasta)</label><input id="saltPerKg" data-setting type="number" min="0" max="25" step="any" value="9.42"></div>
+<div class="field"><label for="yeastDryPerKgFlour">Drożdże suszone (g/kg mąki)</label><input id="yeastDryPerKgFlour" data-setting type="number" min="0.05" max="12" step="any" value="2.11"></div>
 <div class="field"><label for="yeastType">Rodzaj drożdży</label><select id="yeastType" data-setting><option value="dry">Suszone</option><option value="fresh">Świeże (~3× suszone)</option></select></div>
 <div class="field"><label for="tempC">Temperatura pokoju (°C)</label><input id="tempC" data-setting type="number" min="16" max="30" step="0.5" value="22"></div>
 <div class="field"><label for="proofMinutes">Końcowe wyrastanie (min)</label><input id="proofMinutes" data-setting type="number" min="0" max="120" step="5" value="40"></div>
@@ -62,7 +65,8 @@ ol,ul{padding-left:20px}li{margin:12px 0}li small{display:block;margin-top:4px}
 <div class="toggle"><label for="steam">Para na początku pieczenia</label><input id="steam" data-setting type="checkbox" checked></div>
 <small>Film: 8–10 h w temperaturze pokojowej bez składania i bez osobnego końcowego wyrastania. Dodatki pochodzą z komentarza.</small>
 </div></details>
-<div class="actions"><button type="button" class="secondary" id="original">Proces z filmu</button><button type="button" id="improved">Z ulepszeniami</button></div>
+<div class="actions" role="group" aria-label="Wariant przygotowania bagietek"><button type="button" class="preset" id="original" aria-pressed="false">Proces z filmu</button><button type="button" class="preset" id="improved" aria-pressed="true">✓ Z ulepszeniami</button></div>
+<p class="preset-status" id="presetState" role="status" aria-live="polite">Wybrano: z ulepszeniami — składanie, 40 min wyrastania i para.</p>
 <p class="muted">Obie opcje zachowują wybraną liczbę i wagę bagietek. Fermentacja obejmuje składanie; nie doliczamy go drugi raz.</p>
 </section>
 <div id="validation" role="alert"></div>
@@ -89,11 +93,35 @@ const stamp=d=>d.toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-d
 const offset=n=>'+'+String(Math.floor(n/60)).padStart(2,'0')+':'+String(Math.round(n%60)).padStart(2,'0');
 const read=()=>Object.fromEntries(keys.map(k=>[k,el(k).type==='checkbox'?el(k).checked:el(k).value]));
 const apply=v=>keys.forEach(k=>{if(!Object.hasOwn(v,k))return;if(el(k).type==='checkbox')el(k).checked=!!v[k];else el(k).value=v[k];});
+// Skróć zapis również dla ustawień zapisanych przez wcześniejszą wersję aplikacji.
+const digits={hydration:2,saltPerKg:2,yeastDryPerKgFlour:2};
+function shortenInputs(){
+ for(const [id,places] of Object.entries(digits)){
+  const field=el(id),n=Number(field.value);
+  if(field.value.trim()!==''&&Number.isFinite(n))field.value=String(Number(n.toFixed(places)));
+ }
+}
+function syncPreset(s){
+ const original=!s.fold&&!s.steam&&Number(s.proofMinutes)===0;
+ const improved=!!s.fold&&!!s.steam&&Number(s.proofMinutes)===40;
+ const selected=original?'original':improved?'improved':'custom';
+ for(const [id,label] of [['original','Proces z filmu'],['improved','Z ulepszeniami']]){
+  const pressed=selected===id;
+  el(id).setAttribute('aria-pressed',String(pressed));
+  el(id).textContent=(pressed?'✓ ':'')+label;
+ }
+ el('presetState').textContent=selected==='original'
+  ?'Wybrano: proces z filmu — bez składania, bez końcowego wyrastania i bez dodatkowej pary.'
+  :selected==='improved'
+   ?'Wybrano: z ulepszeniami — składanie po 20 min, 40 min wyrastania i para.'
+   :'Własna konfiguracja — składanie: '+(s.fold?'tak':'nie')+', wyrastanie: '+s.proofMinutes+' min, para: '+(s.steam?'tak':'nie')+'.';
+}
 const save=()=>{try{localStorage.setItem('baguetteLabSettings',JSON.stringify(read()));}catch{}};
 const row=(name,value)=>{const d=document.createElement('div'),a=document.createElement('span'),b=document.createElement('b');d.className='line';a.textContent=name;b.textContent=value;d.append(a,b);return d;};
 let copyText='';
 function render(){
- const r=calculateBag(read()),validation=el('validation');
+ const settings=read();syncPreset(settings);
+ const r=calculateBag(settings),validation=el('validation');
  validation.replaceChildren();el('resultCard').hidden=!!r.errors.length;
  if(r.errors.length){const p=document.createElement('p');p.className='notice error';p.textContent=r.errors.join(' ');validation.append(p);return;}
  const v=r.v,yeastLabel=v.yeastType==='fresh'?'świeże':'suszone';
@@ -120,9 +148,12 @@ function render(){
  save();
 }
 try{const saved=JSON.parse(localStorage.getItem('baguetteLabSettings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))apply(saved);}catch{}
+shortenInputs();
 keys.forEach(k=>el(k).addEventListener(el(k).tagName==='SELECT'?'change':'input',render));
-el('original').onclick=()=>{apply({hydration:730/950*100,bulkHours:9,saltPerKg:16/1698*1000,yeastDryPerKgFlour:2/950*1000,yeastType:'dry',proofMinutes:0,fold:false,steam:false,bakeMinutes:25});render();};
-el('improved').onclick=()=>{apply({hydration:730/950*100,bulkHours:9,saltPerKg:16/1698*1000,yeastDryPerKgFlour:2/950*1000,yeastType:'dry',proofMinutes:40,fold:true,steam:true,bakeMinutes:25});render();};
+Object.keys(digits).forEach(k=>el(k).addEventListener('blur',()=>{shortenInputs();render();}));
+const sourceBase={hydration:76.84,bulkHours:9,saltPerKg:9.42,yeastDryPerKgFlour:2.11,yeastType:'dry',bakeMinutes:25};
+el('original').onclick=()=>{apply({...sourceBase,proofMinutes:0,fold:false,steam:false});render();};
+el('improved').onclick=()=>{apply({...sourceBase,proofMinutes:40,fold:true,steam:true});render();};
 el('copy').onclick=async()=>{try{await navigator.clipboard.writeText(copyText);el('copyStatus').textContent='Przepis skopiowany.';}catch{el('copyStatus').textContent='Nie można skopiować automatycznie w tej przeglądarce.';}};
 render();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
