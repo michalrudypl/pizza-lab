@@ -5,11 +5,11 @@ Mobilny kalkulator i planer: poolish, biga, ciasto bez zaczynu oraz bagietki. St
 
 ## Bagietki (bagietki.html)
 
-Druga zakładka zachowuje działanie Pizza Lab i dodaje niezależny kalkulator bagietek. Receptura źródłowa ze zrzutów: **950 g mąki chlebowej, 730 g wody, 16 g soli, 2 g suszonych drożdży** (łącznie 1698 g ciasta; hydratacja 76,84%). Oryginał: wymieszanie około 2 min, fermentacja 8–10 h w temperaturze pokojowej (np. wyłączony zimny piekarnik), delikatne formowanie około 3 min, pieczenie 250°C góra–dół przez około 25 min. Autor wskazuje mąkę zawierającą około 11,5 g białka na 100 g; właściwości konkretnej mąki mogą wymagać regulacji wody.
+Druga zakładka zachowuje działanie Pizza Lab i dodaje niezależny kalkulator bagietek. Obie zakładki podają tylko świeże drożdże. Zapisane wcześniej dawki suchych drożdży w bagietkach są automatycznie przeliczane na świeże. Receptura źródłowa ze zrzutów: **950 g mąki chlebowej, 730 g wody, 16 g soli, 2 g suszonych drożdży** (łącznie 1698 g ciasta; hydratacja 76,84%). Oryginał: wymieszanie około 2 min, fermentacja 8–10 h w temperaturze pokojowej (np. wyłączony zimny piekarnik), delikatne formowanie około 3 min, pieczenie 250°C góra–dół przez około 25 min. Autor wskazuje mąkę zawierającą około 11,5 g białka na 100 g; właściwości konkretnej mąki mogą wymagać regulacji wody.
 
 Przyciski **Proces z filmu** i **Z ulepszeniami** przełączają przebieg pracy, nie zmieniając liczby ani wagi sztuk. Aktywny wariant jest wyróżniony i ma oznaczenie ✓. Po ręcznej zmianie etapów ulepszeń wyświetlany jest wariant „Własna konfiguracja”. Pola procentowe i dawki są zaokrąglane do maksymalnie dwóch miejsc po przecinku, również po odczycie starych ustawień z pamięci przeglądarki. Ulepszony wariant dodaje pojedyncze złożenie po 20 minutach, 40 minut końcowego wyrastania (w komentarzu 30–45 min) i parę na początku pieczenia. To sugestie komentującego, a nie fragment oryginalnej receptury. Parę stosuj bezpiecznie, korzystając z naczynia przeznaczonego do wysokiej temperatury — nie wrzucaj lodu na dno piekarnika.
 
-Kalkulator przyjmuje masę **surowej** bagietki. Liczy bilans mąki, wody, soli i drożdży z równania masy całkowitej, więc suma wyników odpowiada liczbie i wadze sztuk. Sól w **g/kg całego ciasta**, drożdże w **g/kg mąki (ekwiwalent suszonych)**. Drożdże świeże przelicza orientacyjnie jako 3× suszone; film nie określa jednoznacznie rodzaju suszonych drożdży. Dawkowanie drożdży nie jest automatycznie korygowane do temperatury i długości fermentacji.
+Kalkulator przyjmuje masę **surowej** bagietki. Liczy bilans mąki, wody, soli i drożdży z równania masy całkowitej, więc suma wyników odpowiada liczbie i wadze sztuk. Sól w **g/kg całego ciasta**, a drożdże wyłącznie **świeże** w **g/kg mąki**. Baza przelicza 2 g suchych drożdży ze źródła na około 6 g świeżych. Stosowany przelicznik 3:1 jest orientacyjny. Dawkowanie drożdży nie jest automatycznie korygowane do temperatury i długości fermentacji.
 
 Wpisana data oznacza **moment wstawienia do piekarnika**, nie moment zakończenia wypieku. Harmonogram cofa mieszanie o fermentację, 3 min formowania i ewentualne końcowe wyrastanie. Składanie mieści się w obrębie fermentacji wstępnej, więc nie wydłuża czasu o kolejne 20 minut. Czasy są wskazówką, a nie gwarantowanym oknem dojrzałości.
 
@@ -31,7 +31,7 @@ Baza poolishu wybiera 12 h w TO (z zakresu 10–16 h w opisie), 1,5 h przed kulk
 
 Dawka drożdży jest skalowana z wybranej bazy albo wpisywana ręcznie. Własne dawki podaje się w ekwiwalencie świeżych: g/kg mąki zaczynu oraz dodatkowo g/kg całej mąki. Korekta procentowa dotyczy obu dawek. Brak drożdży w zaczynie blokuje przepis; zakwas nie jest obsługiwany.
 
-Dla instant baza Gozney stosuje podaną przez autora proporcję 1:2 do świeżych. Pozostałe bazy i tryb własny używają orientacyjnego 1:3, jawnie opisanego w interfejsie; należy sprawdzić producenta. Nie utożsamiamy niesprecyzowanych „suchych drożdży” z instant.
+Interfejs udostępnia wyłącznie świeże drożdże. Silnik pizzy zachowuje stare warianty tylko dla zgodności z wcześniejszymi testami, ale w UI zawsze wybierana jest opcja fresh.
 
 **Zmiana czasu, temperatury, soli czy udziału zaczynu nie przelicza automatycznie drożdży.** Usunięto z aktywnego modelu niezweryfikowane mnożniki aktywności zaczynu i stały czas chłodzenia. Wpływ tych warunków wymaga dopracowania receptury w rzeczywistych wypiekach; dodanie kolejnej arbitralnej korekty nie zastępowałoby kalibracji.
 
@@ -51,7 +51,7 @@ Sól pozostaje w g/kg gotowego ciasta zgodnie z preferencją użytkownika; podsu
 
 ## Prosty kalkulator
 
-Jeden ekran, bez zakładek, dziennika wypieków, zdjęć, oceny dojrzałości i prowadzenia sesji. Podstawowe pola: metoda, liczba pizz, masa kulki, hydratacja, sól w g/kg ciasta, temperatura pokoju, typ drożdży, włączenie lodówki i opcjonalny termin pieczenia.
+Jeden ekran, bez zakładek, dziennika wypieków, zdjęć, oceny dojrzałości i prowadzenia sesji. Podstawowe pola: metoda, liczba pizz, masa kulki, hydratacja, sól w g/kg ciasta, temperatura pokoju, wyłącznie świeże drożdże, włączenie lodówki i opcjonalny termin pieczenia.
 
 **Ustawienia zaawansowane** są domyślnie zwinięte: parametry zaczynu, czasy etapów, chłodzenie masy lub kulek, własne dawki drożdży, mąka i W, temperatura ciasta, pomoc DDT oraz odstępy kontroli. Zmiana metody wczytuje jej bazę, zachowując liczbę pizz, masę kulki i termin. Wyłączenie lodówki usuwa etapy TK; bazowy poolish fermentuje 12 h w TO. To własna adaptacja, nie nowa skalibrowana receptura. Zmiana hydratacji poniżej udziału mąki w poolishu ogranicza udział zaczynu, aby zachować dodatni bilans wody.
 

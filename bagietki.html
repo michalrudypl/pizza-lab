@@ -25,7 +25,7 @@ input[type=checkbox]{width:22px;height:22px;min-height:0;flex:none;accent-color:
 button{padding:11px 12px;background:var(--accent);color:white;font-weight:650;border:0;border-radius:10px;cursor:pointer}
 button.secondary{background:var(--soft);color:var(--ink)}button:disabled{opacity:.5}
 button.preset{background:var(--soft);color:var(--ink);border:2px solid transparent;padding:9px 10px;min-height:50px}
-button.preset[aria-pressed="true"]{background:var(--accent);color:white;border-color:var(--accent)}
+button.preset[aria-pressed="true"]{background:var(--accent);color:white;border-color:var(--accent)}.fixed-value{display:flex;align-items:center;height:48px;min-height:48px;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--soft);font-weight:650}
 .preset-status{color:var(--ink);background:var(--soft);font-size:13px;padding:11px 12px;border-radius:10px;margin:8px 0 0}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .actions{display:flex;gap:8px;margin:12px 0 16px}.actions button{flex:1}
@@ -54,9 +54,9 @@ ol,ul{padding-left:20px}li{margin:12px 0}li small{display:block;margin-top:4px}
 <div class="field" style="margin-top:14px"><label for="bakeAt">Kiedy wstawiasz do piekarnika? (opcjonalnie)</label><input id="bakeAt" data-setting type="datetime-local"></div>
 <details id="advanced"><summary>Ustawienia zaawansowane</summary><div>
 <div class="grid">
-<div class="field"><label for="saltPerKg">Sól (g/kg ciasta)</label><input id="saltPerKg" data-setting type="number" min="0" max="25" step="any" value="9.42"></div>
-<div class="field"><label for="yeastDryPerKgFlour">Drożdże suszone (g/kg mąki)</label><input id="yeastDryPerKgFlour" data-setting type="number" min="0.05" max="12" step="any" value="2.11"></div>
-<div class="field"><label for="yeastType">Rodzaj drożdży</label><select id="yeastType" data-setting><option value="dry">Suszone</option><option value="fresh">Świeże (~3× suszone)</option></select></div>
+<div class="field"><label for="saltPerKg">Sól (g/kg ciasta)</label><input id="saltPerKg" data-setting type="number" min="0" max="25" step="any" value="9.4"></div>
+<div class="field"><label for="yeastFreshPerKgFlour">Drożdże świeże (g/kg mąki)</label><input id="yeastFreshPerKgFlour" data-setting type="number" min="0.15" max="36" step="any" value="6.32"></div>
+<div class="field"><label>Rodzaj drożdży</label><div class="fixed-value">Świeże</div></div>
 <div class="field"><label for="tempC">Temperatura pokoju (°C)</label><input id="tempC" data-setting type="number" min="16" max="30" step="0.5" value="22"></div>
 <div class="field"><label for="proofMinutes">Końcowe wyrastanie (min)</label><input id="proofMinutes" data-setting type="number" min="0" max="120" step="5" value="40"></div>
 <div class="field"><label for="bakeMinutes">Pieczenie (min)</label><input id="bakeMinutes" data-setting type="number" min="10" max="50" step="1" value="25"></div>
@@ -87,14 +87,14 @@ ol,ul{padding-left:20px}li{margin:12px 0}li small{display:block;margin-top:4px}
 'use strict';
 (() => {
 const el=id=>document.getElementById(id);
-const keys=['count','weight','hydration','bulkHours','bakeAt','saltPerKg','yeastDryPerKgFlour','yeastType','tempC','proofMinutes','bakeMinutes','fold','steam'];
+const keys=['count','weight','hydration','bulkHours','bakeAt','saltPerKg','yeastFreshPerKgFlour','tempC','proofMinutes','bakeMinutes','fold','steam'];
 const fmt=(n,d=1)=>Number(n).toLocaleString('pl-PL',{maximumFractionDigits:d});
 const stamp=d=>d.toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 const offset=n=>'+'+String(Math.floor(n/60)).padStart(2,'0')+':'+String(Math.round(n%60)).padStart(2,'0');
 const read=()=>Object.fromEntries(keys.map(k=>[k,el(k).type==='checkbox'?el(k).checked:el(k).value]));
 const apply=v=>keys.forEach(k=>{if(!Object.hasOwn(v,k))return;if(el(k).type==='checkbox')el(k).checked=!!v[k];else el(k).value=v[k];});
 // Skróć zapis również dla ustawień zapisanych przez wcześniejszą wersję aplikacji.
-const digits={hydration:2,saltPerKg:2,yeastDryPerKgFlour:2};
+const digits={hydration:2,saltPerKg:2,yeastFreshPerKgFlour:2};
 function shortenInputs(){
  for(const [id,places] of Object.entries(digits)){
   const field=el(id),n=Number(field.value);
@@ -124,7 +124,7 @@ function render(){
  const r=calculateBag(settings),validation=el('validation');
  validation.replaceChildren();el('resultCard').hidden=!!r.errors.length;
  if(r.errors.length){const p=document.createElement('p');p.className='notice error';p.textContent=r.errors.join(' ');validation.append(p);return;}
- const v=r.v,yeastLabel=v.yeastType==='fresh'?'świeże':'suszone';
+ const v=r.v,yeastLabel='świeże';
  el('meta').textContent=`${v.count} × ${fmt(v.weight)} g · ${fmt(v.hydration,2)}% wody · ${fmt(v.bulkHours,1)} h fermentacji`;
  el('ingredients').replaceChildren(
    row('Mąka pszenna chlebowa',fmt(r.flour,1)+' g'),
@@ -147,11 +147,21 @@ function render(){
   '\nCzasy są orientacyjne, obserwuj ciasto.';
  save();
 }
-try{const saved=JSON.parse(localStorage.getItem('baguetteLabSettings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))apply(saved);}catch{}
+try{
+ const saved=JSON.parse(localStorage.getItem('baguetteLabSettings'));
+ if(saved&&typeof saved==='object'&&!Array.isArray(saved)){
+  // Migracja wcześniejszej dawki (g suszonych/kg mąki) na g świeżych/kg mąki.
+  if(saved.yeastFreshPerKgFlour===undefined&&saved.yeastDryPerKgFlour!==undefined){
+   saved.yeastFreshPerKgFlour=Number(saved.yeastDryPerKgFlour)*3;
+  }
+  if(Number(saved.saltPerKg)>9.41&&Number(saved.saltPerKg)<9.44)saved.saltPerKg=9.4;
+  apply(saved);
+ }
+}catch{}
 shortenInputs();
 keys.forEach(k=>el(k).addEventListener(el(k).tagName==='SELECT'?'change':'input',render));
 Object.keys(digits).forEach(k=>el(k).addEventListener('blur',()=>{shortenInputs();render();}));
-const sourceBase={hydration:76.84,bulkHours:9,saltPerKg:9.42,yeastDryPerKgFlour:2.11,yeastType:'dry',bakeMinutes:25};
+const sourceBase={hydration:76.84,bulkHours:9,saltPerKg:9.4,yeastFreshPerKgFlour:6.32,bakeMinutes:25};
 el('original').onclick=()=>{apply({...sourceBase,proofMinutes:0,fold:false,steam:false});render();};
 el('improved').onclick=()=>{apply({...sourceBase,proofMinutes:40,fold:true,steam:true});render();};
 el('copy').onclick=async()=>{try{await navigator.clipboard.writeText(copyText);el('copyStatus').textContent='Przepis skopiowany.';}catch{el('copyStatus').textContent='Nie można skopiować automatycznie w tej przeglądarce.';}};
