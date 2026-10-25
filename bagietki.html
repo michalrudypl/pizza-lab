@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182d27"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pizza Lab">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Pizza Lab — kalkulator bagietek</title>
+<style>
+:root{--bg:#f4f3ed;--ink:#182d27;--muted:#607169;--accent:#1c6a50;--line:#e4e9e3;--soft:#edf3ee}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+main{max-width:620px;margin:auto;padding:24px 16px max(42px,env(safe-area-inset-bottom))}
+h1{font-size:30px;letter-spacing:-1px;margin:0}h2{font-size:20px;margin:0 0 16px}h3{font-size:16px;margin:20px 0 8px}
+header p{margin:5px 0 14px}p{margin:9px 0}.muted,small{font-size:13px;color:var(--muted)}
+nav{display:flex;gap:8px;margin:16px 0 20px}nav a{text-decoration:none;flex:1;text-align:center;padding:10px;border-radius:10px;background:white;color:var(--ink);font-size:14px;font-weight:650}
+nav a[aria-current=page]{color:white;background:var(--accent)}
+.card{background:white;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 3px 20px #182d2707}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:end}.field{min-width:0;margin:0 0 14px}.grid .field{margin:0}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+input,select,button{font:inherit;color:inherit}input,select{display:block;width:100%;min-width:0;max-width:100%;height:48px;min-height:48px;padding:10px 12px;border:1px solid #cbd5cd;border-radius:10px;background:white;-webkit-appearance:none;appearance:none;line-height:1.3}
+select{padding-right:30px;background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5l6 6 6-6' fill='none' stroke='%23607169' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center}
+input[type=datetime-local]{text-align:left;overflow:hidden}input::-webkit-date-and-time-value{text-align:left;margin:0}input::-webkit-datetime-edit{padding:0}
+input[type=checkbox]{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--accent);-webkit-appearance:checkbox;appearance:checkbox}
+button{padding:11px 12px;background:var(--accent);color:white;font-weight:650;border:0;border-radius:10px;cursor:pointer}
+button.secondary{background:var(--soft);color:var(--ink)}button:disabled{opacity:.5}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.actions{display:flex;gap:8px;margin:12px 0 16px}.actions button{flex:1}
+details{border-top:1px solid var(--line);margin-top:18px;padding-top:15px}summary{font-size:14px;font-weight:650;cursor:pointer}details>div{margin-top:16px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:13px 0}.toggle label{margin:0;flex:1}
+.line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.line b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.start{background:var(--soft);padding:14px;border-radius:12px;margin-top:18px}.start strong{display:block;font-size:18px}
+.notice{background:#fff4db;color:#765019;padding:12px;border-radius:10px;font-size:13px;margin:12px 0}.error{background:#fff0ed;color:#8c2e24}
+ol,ul{padding-left:20px}li{margin:12px 0}li small{display:block;margin-top:4px}
+.meta{font-size:14px;color:var(--muted);margin-top:-6px}.footer{text-align:center;margin-top:20px}
+@media(max-width:380px){main{padding-left:12px;padding-right:12px}.card{padding:16px}.grid{gap:10px}input,select{padding:10px 8px}.line{font-size:14px}}
+</style>
+</head>
+<body><main>
+<header><h1>Pizza Lab</h1><p class="muted">Prosty kalkulator pieczywa i pizzy.</p>
+<nav aria-label="Kalkulatory"><a href="./index.html">Pizza</a><a href="./bagietki.html" aria-current="page">Bagietki</a></nav></header>
+<section class="card" aria-labelledby="settingsTitle">
+<h2 id="settingsTitle">Ustaw bagietki</h2>
+<div class="grid">
+<div class="field"><label for="count">Liczba bagietek</label><input id="count" data-setting type="number" min="1" max="20" step="1" value="2"></div>
+<div class="field"><label for="weight">Waga sztuki (g, przed pieczeniem)</label><input id="weight" data-setting type="number" min="100" max="650" step="5" value="200"></div>
+<div class="field"><label for="hydration">Hydratacja (%)</label><input id="hydration" data-setting type="number" min="55" max="90" step="0.1" value="76.84"></div>
+<div class="field"><label for="bulkHours">Fermentacja (h)</label><input id="bulkHours" data-setting type="number" min="4" max="16" step="0.5" value="9"></div>
+</div>
+<div class="field" style="margin-top:14px"><label for="bakeAt">Kiedy wstawiasz do piekarnika? (opcjonalnie)</label><input id="bakeAt" data-setting type="datetime-local"></div>
+<details id="advanced"><summary>Ustawienia zaawansowane</summary><div>
+<div class="grid">
+<div class="field"><label for="saltPerKg">Sól (g/kg ciasta)</label><input id="saltPerKg" data-setting type="number" min="0" max="25" step="any" value="9.423"></div>
+<div class="field"><label for="yeastDryPerKgFlour">Drożdże suszone (g/kg mąki)</label><input id="yeastDryPerKgFlour" data-setting type="number" min="0.05" max="12" step="any" value="2.105263"></div>
+<div class="field"><label for="yeastType">Rodzaj drożdży</label><select id="yeastType" data-setting><option value="dry">Suszone</option><option value="fresh">Świeże (~3× suszone)</option></select></div>
+<div class="field"><label for="tempC">Temperatura pokoju (°C)</label><input id="tempC" data-setting type="number" min="16" max="30" step="0.5" value="22"></div>
+<div class="field"><label for="proofMinutes">Końcowe wyrastanie (min)</label><input id="proofMinutes" data-setting type="number" min="0" max="120" step="5" value="40"></div>
+<div class="field"><label for="bakeMinutes">Pieczenie (min)</label><input id="bakeMinutes" data-setting type="number" min="10" max="50" step="1" value="25"></div>
+</div>
+<div class="toggle"><label for="fold">Jedno składanie po 20 minutach</label><input id="fold" data-setting type="checkbox" checked></div>
+<div class="toggle"><label for="steam">Para na początku pieczenia</label><input id="steam" data-setting type="checkbox" checked></div>
+<small>Film: 8–10 h w temperaturze pokojowej bez składania i bez osobnego końcowego wyrastania. Dodatki pochodzą z komentarza.</small>
+</div></details>
+<div class="actions"><button type="button" class="secondary" id="original">Proces z filmu</button><button type="button" id="improved">Z ulepszeniami</button></div>
+<p class="muted">Obie opcje zachowują wybraną liczbę i wagę bagietek. Fermentacja obejmuje składanie; nie doliczamy go drugi raz.</p>
+</section>
+<div id="validation" role="alert"></div>
+<section class="card" id="resultCard" aria-labelledby="resultTitle">
+<h2 id="resultTitle">Twój przepis</h2>
+<p id="meta" class="meta"></p>
+<div id="ingredients"></div>
+<div class="start" id="start"></div>
+<details open><summary>Harmonogram krok po kroku</summary><div><ol id="steps"></ol></div></details>
+<details><summary>Wskazówki i ograniczenia</summary><div><ul id="warnings"></ul></div></details>
+<div class="actions"><button id="copy" type="button">Kopiuj przepis</button></div>
+<p id="copyStatus" class="muted" role="status"></p>
+</section>
+<p class="footer muted">Porcja dotyczy surowego ciasta. Masa po upieczeniu będzie mniejsza.</p>
+</main>
+<script src="./baguette.js"></script>
+<script>
+'use strict';
+(() => {
+const el=id=>document.getElementById(id);
+const keys=['count','weight','hydration','bulkHours','bakeAt','saltPerKg','yeastDryPerKgFlour','yeastType','tempC','proofMinutes','bakeMinutes','fold','steam'];
+const fmt=(n,d=1)=>Number(n).toLocaleString('pl-PL',{maximumFractionDigits:d});
+const stamp=d=>d.toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const offset=n=>'+'+String(Math.floor(n/60)).padStart(2,'0')+':'+String(Math.round(n%60)).padStart(2,'0');
+const read=()=>Object.fromEntries(keys.map(k=>[k,el(k).type==='checkbox'?el(k).checked:el(k).value]));
+const apply=v=>keys.forEach(k=>{if(!Object.hasOwn(v,k))return;if(el(k).type==='checkbox')el(k).checked=!!v[k];else el(k).value=v[k];});
+const save=()=>{try{localStorage.setItem('baguetteLabSettings',JSON.stringify(read()));}catch{}};
+const row=(name,value)=>{const d=document.createElement('div'),a=document.createElement('span'),b=document.createElement('b');d.className='line';a.textContent=name;b.textContent=value;d.append(a,b);return d;};
+let copyText='';
+function render(){
+ const r=calculateBag(read()),validation=el('validation');
+ validation.replaceChildren();el('resultCard').hidden=!!r.errors.length;
+ if(r.errors.length){const p=document.createElement('p');p.className='notice error';p.textContent=r.errors.join(' ');validation.append(p);return;}
+ const v=r.v,yeastLabel=v.yeastType==='fresh'?'świeże':'suszone';
+ el('meta').textContent=`${v.count} × ${fmt(v.weight)} g · ${fmt(v.hydration,2)}% wody · ${fmt(v.bulkHours,1)} h fermentacji`;
+ el('ingredients').replaceChildren(
+   row('Mąka pszenna chlebowa',fmt(r.flour,1)+' g'),
+   row('Woda',fmt(r.water,1)+' g'),
+   row('Sól',fmt(r.salt,1)+' g'),
+   row('Drożdże '+yeastLabel,fmt(r.yeast,2)+' g'),
+   row('Łączna masa ciasta',fmt(r.total,1)+' g')
+ );
+ const start=el('start');start.replaceChildren();
+ const t=document.createElement('span'),b=document.createElement('strong'),note=document.createElement('small');
+ t.textContent=r.startAt?'Rozpocznij mieszanie':'Czas od mieszania do końca pieczenia';
+ b.textContent=r.startAt?stamp(r.startAt):fmt(r.readyOffset/60,2)+' h';
+ note.textContent=r.startAt?'Daty orientacyjne; nagrzej piekarnik przed planowanym wypiekiem.':'Wybierz godzinę pieczenia, aby uzyskać konkretne daty i godziny.';
+ start.append(t,b,note);
+ el('steps').replaceChildren(...r.steps.map(s=>{const li=document.createElement('li'),b=document.createElement('b'),sm=document.createElement('small');const when=r.startAt?stamp(new Date(r.startAt.getTime()+s.at*60000)):offset(s.at);b.textContent=when+' — '+s.title;sm.textContent=s.note;li.append(b,sm);return li;}));
+ el('warnings').replaceChildren(...r.warnings.map(w=>{const li=document.createElement('li');li.textContent=w;return li;}));
+ copyText='BAGIETKI — Pizza Lab\n'+v.count+' × '+v.weight+' g | Hydratacja '+fmt(v.hydration,2)+'%\n'+
+  [['Mąka',r.flour],['Woda',r.water],['Sól',r.salt],['Drożdże '+yeastLabel,r.yeast]].map(([k,val])=>k+': '+fmt(val,k.startsWith('Drożdże')?2:1)+' g').join('\n')+
+  '\n\nEtapy:\n'+r.steps.map(s=>(r.startAt?stamp(new Date(r.startAt.getTime()+s.at*60000)):offset(s.at))+' '+s.title+': '+s.note).join('\n')+
+  '\nCzasy są orientacyjne, obserwuj ciasto.';
+ save();
+}
+try{const saved=JSON.parse(localStorage.getItem('baguetteLabSettings'));if(saved&&typeof saved==='object'&&!Array.isArray(saved))apply(saved);}catch{}
+keys.forEach(k=>el(k).addEventListener(el(k).tagName==='SELECT'?'change':'input',render));
+el('original').onclick=()=>{apply({hydration:730/950*100,bulkHours:9,saltPerKg:16/1698*1000,yeastDryPerKgFlour:2/950*1000,yeastType:'dry',proofMinutes:0,fold:false,steam:false,bakeMinutes:25});render();};
+el('improved').onclick=()=>{apply({hydration:730/950*100,bulkHours:9,saltPerKg:16/1698*1000,yeastDryPerKgFlour:2/950*1000,yeastType:'dry',proofMinutes:40,fold:true,steam:true,bakeMinutes:25});render();};
+el('copy').onclick=async()=>{try{await navigator.clipboard.writeText(copyText);el('copyStatus').textContent='Przepis skopiowany.';}catch{el('copyStatus').textContent='Nie można skopiować automatycznie w tej przeglądarce.';}};
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body></html>

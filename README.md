@@ -1,6 +1,19 @@
 # Pizza Lab
 
-Mobilny kalkulator i planer: poolish, biga i ciasto bez zaczynu. Statyczna PWA, bez backendu i zależności produkcyjnych.
+Mobilny kalkulator i planer: poolish, biga, ciasto bez zaczynu oraz bagietki. Statyczna PWA, bez backendu i zależności produkcyjnych.
+
+
+## Bagietki (bagietki.html)
+
+Druga zakładka zachowuje działanie Pizza Lab i dodaje niezależny kalkulator bagietek. Receptura źródłowa ze zrzutów: **950 g mąki chlebowej, 730 g wody, 16 g soli, 2 g suszonych drożdży** (łącznie 1698 g ciasta; hydratacja 76,84%). Oryginał: wymieszanie około 2 min, fermentacja 8–10 h w temperaturze pokojowej (np. wyłączony zimny piekarnik), delikatne formowanie około 3 min, pieczenie 250°C góra–dół przez około 25 min. Autor wskazuje mąkę zawierającą około 11,5 g białka na 100 g; właściwości konkretnej mąki mogą wymagać regulacji wody.
+
+Przyciski **Proces z filmu** i **Z ulepszeniami** przełączają przebieg pracy, nie zmieniając liczby ani wagi sztuk. Ulepszony wariant dodaje pojedyncze złożenie po 20 minutach, 40 minut końcowego wyrastania (w komentarzu 30–45 min) i parę na początku pieczenia. To sugestie komentującego, a nie fragment oryginalnej receptury. Parę stosuj bezpiecznie, korzystając z naczynia przeznaczonego do wysokiej temperatury — nie wrzucaj lodu na dno piekarnika.
+
+Kalkulator przyjmuje masę **surowej** bagietki. Liczy bilans mąki, wody, soli i drożdży z równania masy całkowitej, więc suma wyników odpowiada liczbie i wadze sztuk. Sól w **g/kg całego ciasta**, drożdże w **g/kg mąki (ekwiwalent suszonych)**. Drożdże świeże przelicza orientacyjnie jako 3× suszone; film nie określa jednoznacznie rodzaju suszonych drożdży. Dawkowanie drożdży nie jest automatycznie korygowane do temperatury i długości fermentacji.
+
+Wpisana data oznacza **moment wstawienia do piekarnika**, nie moment zakończenia wypieku. Harmonogram cofa mieszanie o fermentację, 3 min formowania i ewentualne końcowe wyrastanie. Składanie mieści się w obrębie fermentacji wstępnej, więc nie wydłuża czasu o kolejne 20 minut. Czasy są wskazówką, a nie gwarantowanym oknem dojrzałości.
+
+Uruchom testy Node: `node --test calculator.test.js baguette.test.js`.
 
 ## Receptury i dokładność
 
